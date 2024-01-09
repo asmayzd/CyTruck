@@ -6,11 +6,11 @@ chmod 777 script.sh
 choix=""
 while ! [[ "$choix" =~ ^[1-5]$ ]]; do
     echo "====== Bienvenue ! Choisissez une fonction : ====="
-    echo "1. Fonction d1"
-    echo "2. Fonction d2"
-    echo "3. Fonction l"
-    echo "4. Fonction t"
-    echo "5. Fonction s"
+    echo "1. Fonction -d1"
+    echo "2. Fonction -d2"
+    echo "3. Fonction -l"
+    echo "4. Fonction -t"
+    echo "5. Fonction -s"
     read -p "Entrez le numéro de la fonction que vous voulez exécuter : " choix
 
 if ! [[ "$choix" =~ ^[1-5]$ ]]; then
