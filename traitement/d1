@@ -36,6 +36,9 @@ fi
         set boxwidth 0.5
         set offsets 0,0,0.5-0.5/2,0.5
         set yrange [0:*]  # Utilisez la plage par défaut pour l'axe y
+	set title 'Top 10 des conducteurs avec le plus de trajets'
+        set ylabel 'Noms des conducteurs'
+        set xlabel 'Nombre de trajets'
 
 # Code couleur pour le violet en RGB (en pourcentage)
 #violet = 0x993399  # Violet foncé
