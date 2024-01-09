@@ -4,6 +4,10 @@
 chmod 777 traitement/d2
 
 d2(){
+
+	# Enregistrez le temps de début.
+        debut_timer_d2=$(date +%s)
+
 	cut -d';' -f5,6 data/data.csv |
 	awk -v OFS=';' -F';'  'NR>1 {journey_lengths_sum[$2]+=$1} END {for (driver in journey_lengths_sum) print driver, journey_lengths_sum[driver]}' |
 	sort -t';' -nrk2,2 |
@@ -11,6 +15,14 @@ d2(){
 	awk -F';' '{gsub(/ /, ",", $2); print $2 ";" $1}' > temp/temp_d2.csv
 
 	cat temp/temp_d2.csv
+
+	fin_timer_d2=$(date +%s)
+
+        # Calculez la durée totale en secondes.
+        duree_option_d2=$((fin_timer_d2 - debut_timer_d2))
+
+        # Affichez la durée.
+        echo  "\nLe traitement de l'option -d2 a pris $duree_option_d2 secondes.\n"
 
     # Créer un fichier de données pour l'histogramme
      awk -F';' '{print $2 "," $1}' temp/temp_d2.csv > temp/histogram_datad2.csv

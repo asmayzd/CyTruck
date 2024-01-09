@@ -5,10 +5,22 @@ chmod 777 traitement/d1
 
 # Définition de la fonction d1
 d1() {
-    # Compter le nombre de trajets pour chaque conducteur
+    
+	# Enregistrez le temps de début.
+        debut_timer_d1=$(date +%s)
+
+# Compter le nombre de trajets pour chaque conducteur
     awk -F";" '/;1;/ {compteur[$6] += 1} END {for (nom in compteur) print compteur[nom], nom}' data/data.csv | sort -nrk1,1 | head -10 > temp/temp_d1.csv
 
     cat temp/temp_d1.csv
+	
+	fin_timer_d1=$(date +%s)
+
+        # Calculez la durée totale en secondes.
+        duree_option_d1=$((fin_timer_d1 - debut_timer_d1))
+
+        # Affichez la durée.
+        echo  "\nLe traitement de l'option -d1 a pris $duree_option_d1 secondes.\n"
 
     # Créer un fichier de données pour l'histogramme
     awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv > temp/histogram_data.csv
@@ -36,7 +48,7 @@ fi
         set boxwidth 0.5
         set offsets 0,0,0.5-0.5/2,0.5
         set yrange [0:*]  # Utilisez la plage par défaut pour l'axe y
-	set title 'Top 10 des conducteurs avec le plus de trajets'
+        set title 'Top 10 des conducteurs avec le plus de trajets'
         set ylabel 'Noms des conducteurs'
         set xlabel 'Nombre de trajets'
 
@@ -46,13 +58,14 @@ fi
         plot 'temp/histogram_data.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
 GNUPLOT_SCRIPT
 
-	# Ouvre automatiquement l'image du graphique
-	display images/graphique_d1.png
+        # Ouvre automatiquement l'image du graphique
+        display images/graphique_d1.png
 #mogrify -rotate "-90" images/graphique_d1.png
 
 
 # Rotation de l'image pour avoir un histogramme horizontal
   #convert images/graphique_d1.png -rotate 90 images/graphique_d1_rotated.png
 }
-# Appel de la fonction d1Flag
+# Appel de la fonction d1
 d1
+
