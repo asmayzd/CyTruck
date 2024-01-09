@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Assurer que le script d2 a les permissions d'exécution
+chmod 777 traitement/d2
+
+d2(){
+	cut -d';' -f5,6 data/data.csv |
+	awk -v OFS=';' -F';'  'NR>1 {journey_lengths_sum[$2]+=$1} END {for (driver in journey_lengths_sum) print driver, journey_lengths_sum[driver]}' |
+	sort -t';' -nrk2,2 |
+	head -n10 |
+	awk -F';' '{gsub(/ /, ",", $2); print $2 ";" $1}' > temp/temp_d2.csv
+
+	cat temp/temp_d2.csv
+
+    # Créer un fichier de données pour l'histogramme
+     awk -F';' '{print $2 "," $1}' temp/temp_d2.csv > temp/histogram_datad2.csv
+
+ # Appel de la fonction pour tracer le graphique
+    generate_d2
+}
+
+generate_d2() {
+    # Vérification si le fichier existe
+if [ ! -f "temp/histogram_datad2.csv" ]; then
+    echo "Le fichier 'temp/histogram_datad2.csv' n'existe pas."
+    exit 1
+fi
+
+        # Exécution de Gnuplot
+        gnuplot <<- GNUPLOT_SCRIPT
+        set datafile separator ","
+        set terminal pngcairo
+        set output 'images/graphique_d2.png'
+
+        set style fill solid  # solid color boxes
+        unset key             # turn off all titles
+
+        set boxwidth 0.5
+        set offsets 0,0,0.5-0.5/2,0.5
+        set xrange [0:*]
+	set yrange [0:*]  # Utilisez la plage par défaut pour l'axe y
+# Code couleur pour le violet en RGB (en pourcentage)
+#violet = 0x993399  # Violet foncé
+
+        plot 'temp/histogram_datad2.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
+GNUPLOT_SCRIPT
+
+ # Ouvre automatiquement l'image du graphique
+        display images/graphique_d2.png
+
+}
+d2
