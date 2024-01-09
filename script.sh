@@ -5,53 +5,62 @@ chmod +x traitement/d1
 
 # Définition de la fonction d1
 d1() {
-    
     # Compter le nombre de trajets pour chaque conducteur
-     awk -F";" '/;1;/ {compteur[$6] += 1} END {for (nom in compteur) print compteur[nom], nom}' data/test1.csv | sort -nrk1,1 | head -10 > temp/temp_d1.csv
+    awk -F";" '/;1;/ {compteur[$6] += 1} END {for (nom in compteur) print compteur[nom], nom}' data/test1.csv | sort -nrk1,1 | head -10 > temp/temp_d1.csv
 
     cat temp/temp_d1.csv
 
     # Créer un fichier de données pour l'histogramme
-     awk -v OFS=';' -F';' '{print $2, $1}' temp/temp_d1.csv > temp/histogram_data.csv
+    awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv > temp/histogram_data.csv
 
-#Partie graphique (gnuplot).
-        gnuplot << EOF
-
-        # Paramètres de sortie
-        set terminal pngcairo enhanced font 'Arial,10'
-        set output 'images/graphique_d1.png'
-
-        # Paramètres du graphique
-        set bmargin 13    # Ajuster la marge inférieure (en unités par défaut)
-        set rmargin 10
-        set lmargin 10
-	set tmargin 3
-        set title 'Top 10 des conducteurs avec le plus de trajets'
-        set xlabel 'Noms des conducteurs'
-        set ylabel 'Nombre de trajets'
-	set style data histograms
-        set xtic rotate by 90 offset 0,-9
-        set xlabel rotate by 180 offset 0,-9
-        set ylabel offset 92,0
-        set ytic offset 83,0
-        set yrange [0:250]
-        set ytic rotate by 90
-        set style histogram rowstacked
-        set style fill solid border -1
-        set boxwidth 0.8 absolute
-        set format x ""
-	unset key
-
-        # Tracé du graphique
-        set datafile separator ';'
-        plot 'temp/histogram_data.csv' using 0:2:xtic(3) with boxes lc rgb 'blue', '' using 2:2:2 with labels offset 0,1.5 rotate by 90 notitle
-
-EOF
-
-# Rotation de l'image pour avoir un histogramme horizontal
-  convert -rotate 90 images/graphique_d1.png images/graphique_d1.png
-
+    # Appel de la fonction pour tracer le graphique
+    generate_plot
 }
 
+generate_plot() {
+    # Vérification si le fichier existe
+if [ ! -f "temp/histogram_data.csv" ]; then
+    echo "Le fichier 'temp/histogram_data.csv' n'existe pas."
+    exit 1
+fi
+
+	# Création du fichier de commandes pour Gnuplot
+	cat << EOF > gnuplot_commands.txt
+	set datafile separator ","
+	set terminal pngcairo
+	set output 'images/graphique_d1.png'
+	#set style data histograms
+	#set style fill solid
+	#set boxwidth 0.5  # Ajuster la largeur des barres selon vos besoins
+	#set xrange [ 0 : * ] reverse  # Inversion de l'axe y (anciennement x)
+	#set offsets 0,0,0.5-0.5/2.,0.5
+	#set yrange [ 0 : * ]  # Définir la plage pour l'axe x (anciennement y)
+	#set xtics rotate by -90  # Fait pivoter les libellés de l'axe x de -90 degrés
+	#set format y ""  # Pour enlever les libellés par défaut
+	#unset key
+	#set yrange [ * : * ] reverse  # Inversion de l'axe y (anciennement x)
+	#plot 'temp/histogram_data.csv' using 2:ytic(1) with boxes notitle
+#set yrange [*:*]      # start at zero, find max from the data
+set style fill solid  # solid color boxes
+unset key             # turn off all titles
+
+set boxwidth 0.5
+set offsets 0,0,0.5-0.5/2,0.5
+set yrange [0:*]  # Utilisez la plage par défaut pour l'axe y
+# Code couleur pour le violet en RGB (en pourcentage)
+#violet = 0x993399  # Violet foncé
+
+plot 'temp/histogram_data.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
+EOF
+
+	# Exécution de Gnuplot avec les commandes du fichier
+	gnuplot gnuplot_commands.txt
+
+#mogrify -rotate "-90" images/graphique_d1.png
+
+
+# Rotation de l'image pour avoir un histogramme horizontal
+  #convert images/graphique_d1.png -rotate 90 images/graphique_d1_rotated.png
+}
 # Appel de la fonction d1Flag
 d1
