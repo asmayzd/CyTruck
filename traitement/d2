@@ -25,7 +25,7 @@ d2(){
         echo  "\nLe traitement de l'option -d2 a pris $duree_option_d2 secondes.\n"
 
     # Créer un fichier de données pour l'histogramme
-     awk -F';' '{print $2 "," $1}' temp/temp_d2.csv > temp/histogram_datad2.csv
+     awk -F';' '{print $2 "," $1}' temp/temp_d2.csv | sort -t',' -k2,2n > temp/histogram_datad2.csv
 
  # Appel de la fonction pour tracer le graphique
     generate_d2

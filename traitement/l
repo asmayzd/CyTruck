@@ -1,1 +1,66 @@
 #!/bin/bash
+
+# Assurer que le script l a les permissions d'exécution
+chmod 777 traitement/l
+
+# Définition de la fonction l
+l() {
+
+        # Enregistrez le temps de début.
+        debut_timer_l=$(date +%s)
+
+	awk -F";"  '{compteur[$1] += $5} END {for (id_trajet in compteur) print id_trajet ";" compteur[id_trajet]}' data/data.csv |sort -t";" -k2nr | head -10 | sort -t";" -k1n > temp/temp_l.csv
+
+ cat temp/temp_l.csv
+
+        fin_timer_l=$(date +%s)
+
+        # Calculez la durée totale en secondes.
+        duree_option_l=$((fin_timer_l - debut_timer_l))
+
+        # Affichez la durée.
+        echo  "\nLe traitement de l'option -l a pris $duree_option_l secondes.\n"
+
+    # Créer un fichier de données pour l'histogramme
+	awk '{gsub(/^ +/, "", $0); print $2, $1}' temp/temp_l.csv > temp/histogram_datal.csv
+	sed -i 's/^[ \t]*//' temp/histogram_datal.csv
+	
+    # Appel de la fonction pour tracer le graphique
+    generate_l
+}
+
+generate_l() {
+    # Vérification si le fichier existe
+    if [ ! -f "temp/histogram_datal.csv" ]; then
+        echo "Le fichier 'temp/histogram_datal.csv' n'existe pas."
+        exit 1
+    fi
+
+    # Partie graphique (gnuplot)
+    gnuplot << EOF
+
+    # Ouverture du script Gnuplot
+	set terminal png # Définit le type de fichier de sortie comme une image PNG
+	set output 'images/graphique_l.png' # Définit le nom et l'emplacement du fichier de sortie
+	set datafile separator ";"
+
+	# Configuration du tracé
+	set title "Graphique -l"
+	set xlabel "Numero d'identification"
+	set ylabel "Distance parcourue"
+	set boxwidth 0.5 relative
+	set style data histograms
+	set style fill solid
+	set xtics rotate by -45
+	set yrange [0:*]
+
+	# Tracer les données à partir du fichier
+	plot 'temp/histogram_datal.csv' using 2:xtic(1) with boxes title "Distance"
+
+EOF
+
+display images/graphique_l.png
+}
+
+
+l

@@ -1,1 +1,20 @@
 #!/bin/bash
+
+chmod 777 traitement/t
+chmod 777 temp/temp_t.csv
+chmod 777 progc/t.c
+
+t() {
+    cut -d';' -f2,3,4 data/data.csv > temp/temp_t.csv
+
+    # Compiler t.c pour créer un exécutable
+    gcc -o progc/t progc/t.c
+
+    # Exécuter le programme C
+    ./progc/t < temp/temp_t.csv
+
+    # Revenir au répertoire précédent si nécessaire
+    cd ..
+}
+
+t

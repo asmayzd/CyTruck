@@ -23,7 +23,7 @@ d1() {
         echo  "\nLe traitement de l'option -d1 a pris $duree_option_d1 secondes.\n"
 
     # Créer un fichier de données pour l'histogramme
-    awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv > temp/histogram_data.csv
+    awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv | sort -t',' -k2,2n > temp/histogram_data.csv
 
     # Appel de la fonction pour tracer le graphique
     generate_d1
@@ -51,7 +51,7 @@ fi
         set title 'Top 10 des conducteurs avec le plus de trajets'
         set ylabel 'Noms des conducteurs'
         set xlabel 'Nombre de trajets'
-
+		
 # Code couleur pour le violet en RGB (en pourcentage)
 #violet = 0x993399  # Violet foncé
 
