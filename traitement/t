@@ -5,7 +5,7 @@ chmod 777 temp/temp_t.csv
 chmod 777 progc/t.c
 
 t() {
-    cut -d';' -f2,3,4 data/data.csv > temp/temp_t.csv
+    cut -d';' -f2,3,4 data/data.csv | head -50> temp/temp_t.csv
 
     # Compiler t.c pour créer un exécutable
     gcc -o progc/t progc/t.c
