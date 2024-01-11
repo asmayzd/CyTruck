@@ -1,1 +1,23 @@
 #!/bin/bash
+
+chmod 777 traitement/s
+chmod 777 temp/temp_s.csv
+chmod 777 progc/s.c
+
+s() {
+     cut -d';' -f1,5 data/data.csv | tail -n +2 > temp/temp_s.csv
+
+    # Compiler t.c pour créer un exécutable
+    gcc -o progc/s progc/s.c
+
+    # Exécuter le programme C
+    ./progc/s < temp/temp_s.csv
+        cat temp/histogram_datas.csv
+
+    # Revenir au répertoire précédent si nécessaire
+    cd .
+
+}
+
+
+s

@@ -41,7 +41,7 @@ fi
         # Exécution de Gnuplot
         gnuplot <<- GNUPLOT_SCRIPT
         set datafile separator ","
-        set terminal pngcairo
+        set terminal pngcairo 
         set output 'images/graphique_d2.png'
 
         set style fill solid  # solid color boxes
@@ -54,6 +54,7 @@ fi
 	set title 'Top 10 des conducteurs qui ont parcouru la plus longue distance'
         set ylabel 'Noms des conducteurs'
         set xlabel 'Distance parcourue'
+	set xtics rotate by -45
 
 # Code couleur pour le violet en RGB (en pourcentage)
 #violet = 0x993399  # Violet foncé

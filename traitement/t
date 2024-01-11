@@ -5,16 +5,54 @@ chmod 777 temp/temp_t.csv
 chmod 777 progc/t.c
 
 t() {
-    cut -d';' -f2,3,4 data/data.csv | head -50> temp/temp_t.csv
+    cut -d';' -f3,4 data/data.csv | tail -n +2 > temp/temp_t.csv
+	
 
     # Compiler t.c pour créer un exécutable
     gcc -o progc/t progc/t.c
 
     # Exécuter le programme C
     ./progc/t < temp/temp_t.csv
+	cat temp/histogram_datat.csv
 
     # Revenir au répertoire précédent si nécessaire
-    cd ..
+    cd .
+
+	generate_t
+}
+
+generate_t() {
+    # Vérification si le fichier existe
+    if [ ! -f "temp/histogram_datat.csv" ]; then
+        echo "Le fichier 'temp/histogram_datat.csv' n'existe pas."
+        exit 1
+    fi
+
+    # Partie graphique (gnuplot)
+    gnuplot << EOF
+
+    # Ouverture du script Gnuplot
+        set terminal png # Définit le type de fichier de sortie comme une image PNG
+        set output 'images/graphique_t.png' # Définit le nom et l'emplacement du fichier de sortie
+        set datafile separator ";"
+
+        # Configuration du tracé
+        set title "Graphique -t"
+        set xlabel "Nom de la ville"
+        set ylabel "Nombre de passage/depart"
+        set boxwidth 0.4 relative
+        set style data histograms
+        set style fill solid
+        set xtics rotate by -45
+        set yrange [0:*]
+
+        # Tracer les données à partir du fichier
+        plot 'temp/histogram_datat.csv' using 2:xtic(1) title "Nombre de passage", \
+     '' using 3 title "Nombre de depart"
+
+EOF
+
+display images/graphique_t.png
 }
 
 t
