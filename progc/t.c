@@ -1,220 +1,254 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <time.h>
 
-#define MAX_LOT 1000
+typedef struct AVLNode {
+    char ville[50];
+    int trajetsTotal;
+    int trajetsDepart;
+    struct AVLNode *left;
+    struct AVLNode *right;
+    int height;
+} AVLNode;
 
-typedef struct ville{
-  char nom[100];
-  int nbPassage;
-  int nbDepart;
-  int hauteur;
-  int equilibre;
-} Ville;
-
-typedef struct Arbre{
-  Ville v;
-  struct Arbre* fd;
-  struct Arbre* fg;
-} Arbre;
-
-Arbre* creerArbre(Ville a){
-    Arbre* new = malloc(sizeof(Arbre));
-    if(new == NULL){
-        exit(1);
-    }
-    else{
-      strcpy(new->v.nom, a.nom);
-        new->v.nbPassage = a.nbPassage;
-        new->v.nbDepart = a.nbDepart;
-        new->v.hauteur = a.hauteur;
-        new->v.equilibre = a.equilibre;
-        new->fd = NULL;
-        new->fg = NULL;
-    }
-    return new;
+AVLNode *createNode(char ville[]) {
+    AVLNode *newNode = (AVLNode *)malloc(sizeof(AVLNode));
+    strcpy(newNode->ville, ville);
+    newNode->trajetsTotal = 1;
+    newNode->trajetsDepart = 1;
+    newNode->left = newNode->right = NULL;
+    newNode->height = 1;
+    return newNode;
 }
 
-int estVilleDepart(Arbre* arbre, char* nomVille) {
-    if (arbre == NULL) {
+int height(AVLNode *node) {
+    if (node == NULL)
         return 0;
-    }
-
-    if (strcmp(arbre->v.nom, nomVille) == 0) {
-        return arbre->v.nbDepart > 0; 
-    }
-
-    return estVilleDepart(arbre->fg, nomVille) || estVilleDepart(arbre->fd, nomVille);
+    return node->height;
 }
 
-int hauteur(Arbre* a) {
-    if (a == NULL) {
-        return 0;
-    }
-    int hauteur_fg = hauteur(a->fg);
-    int hauteur_fd = hauteur(a->fd);
-    return 1 + (hauteur_fg > hauteur_fd ? hauteur_fg : hauteur_fd);
+int max(int a, int b) {
+    return (a > b) ? a : b;
 }
 
-int equilibre(Arbre* a) {
-    if (a == NULL) {
-        return 0;
-    }
-    return hauteur(a->fg) - hauteur(a->fd);
-}
+AVLNode *rightRotate(AVLNode *y) {
+    AVLNode *x = y->left;
+    AVLNode *T2 = x->right;
 
-Arbre* rotation_fg(Arbre* x) {
-    Arbre* y = x->fd;
-    x->fd = y->fg;
-    y->fg = x;
+    x->right = y;
+    y->left = T2;
 
-    x->v.hauteur = hauteur(x);
-    y->v.hauteur = hauteur(y);
-
-    return y;
-}
-
-Arbre* rotation_fd(Arbre* y) {
-    Arbre* x = y->fg;
-    y->fg = x->fd;
-    x->fd = y;
-
-    y->v.hauteur = hauteur(y);
-    x->v.hauteur = hauteur(x);
+    y->height = max(height(y->left), height(y->right)) + 1;
+    x->height = max(height(x->left), height(x->right)) + 1;
 
     return x;
 }
 
+AVLNode *leftRotate(AVLNode *x) {
+    AVLNode *y = x->right;
+    AVLNode *T2 = y->left;
 
-Arbre* insertion(Arbre* a, Ville v) {
+    y->left = x;
+    x->right = T2;
 
-    if (a == NULL) {
-        a = creerArbre(v);
-    } 
+    x->height = max(height(x->left), height(x->right)) + 1;
+    y->height = max(height(y->left), height(y->right)) + 1;
 
-    else {
+    return y;
+}
 
-        if (strcmp(a->v.nom, v.nom) > 0) {
-            a->fg = insertion(a->fg, v);
-        } 
+int getBalance(AVLNode *node) {
+    if (node == NULL)
+        return 0;
+    return height(node->left) - height(node->right);
+}
 
-        else if (strcmp(a->v.nom, v.nom) < 0) {
-            a->fd = insertion(a->fd, v);
-        } 
+AVLNode *insert(AVLNode *root, char ville[], int isDepart) {
+    if (root == NULL)
+        return createNode(ville);
 
-        else if (strcmp(a->v.nom, v.nom) == 0) {
-            a->v.nbPassage++;
+int compareResult = strcmp(ville, root->ville);
 
-            if (estVilleDepart(a, v.nom)) {
-                a->v.nbDepart++;
+
+    if (compareResult == 0) {
+        // La ville est déjà présente, mise à jour des totaux
+        root->trajetsTotal++;
+        if (isDepart)
+            root->trajetsDepart++;
+    } else if (compareResult < 0) {
+        root->left = insert(root->left, ville, isDepart);
+    } else {
+        root->right = insert(root->right, ville, isDepart);
+    }
+
+    root->height = 1 + max(height(root->left), height(root->right));
+
+    int balance = getBalance(root);
+
+    // Rééquilibrage de l'arbre
+    if (balance > 1 && strcmp(ville, root->left->ville) < 0)
+        return rightRotate(root);
+
+    if (balance < -1 && strcmp(ville, root->right->ville) > 0)
+        return leftRotate(root);
+
+    if (balance > 1 && strcmp(ville, root->left->ville) > 0) {
+        root->left = leftRotate(root->left);
+        return rightRotate(root);
+    }
+
+    if (balance < -1 && strcmp(ville, root->right->ville) < 0) {
+        root->right = rightRotate(root->right);
+        return leftRotate(root);
+    }
+
+    return root;
+}
+
+
+
+void inOrderTraversal(FILE *outputFile, AVLNode *root) {
+    if (root != NULL) {
+        inOrderTraversal(outputFile, root->right); // Inverser l'ordre ici
+        fprintf(outputFile, "%s - Trajets Total: %d, Trajets Départ: %d\n", root->ville, root->trajetsTotal, root->trajetsDepart);
+        inOrderTraversal(outputFile, root->left); // Inverser l'ordre ici
+    }
+}
+
+
+void readTrajetsFromFile(AVLNode **root, const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Erreur lors de l'ouverture du fichier");
+        exit(EXIT_FAILURE);
+    }
+
+    char line[1000]; // Assurez-vous que la taille est suffisante pour contenir une ligne complète
+    char villeA[50];
+    char villeB[50];
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        // Utilisez sscanf pour extraire les villes du format "villeA;villeB"
+        if (sscanf(line, "%49[^;];%49[^;\n]", villeA, villeB) == 2) {
+            *root = insert(*root, villeB, 1); // Ville B en tant que départ (modification ici)
+            *root = insert(*root, villeA, 0); // Ville A en tant qu'arrivée (modification ici)
+        } else {
+            fprintf(stderr, "Erreur de format dans la ligne : %s\n", line);
+        }
+    }
+
+    // Fermer le fichier après la lecture
+    if (fclose(file) != 0) {
+        perror("Erreur lors de la fermeture du fichier");
+        exit(EXIT_FAILURE);
+    }
+}
+
+
+
+typedef struct {
+    char ville[50];
+    int trajetsTotal;
+    int trajetsDepart;
+} Top10Info;
+
+// Fonction pour parcourir l'arbre en infixe et mettre à jour les informations du top 10
+void updateTop10(AVLNode *root, Top10Info top10[], int *count) {
+    if (root != NULL) {
+        updateTop10(root->left, top10, count);
+
+        // Mettre à jour le top 10 avec les informations actuelles
+        int index = *count;
+        if (index < 10) {
+            strcpy(top10[index].ville, root->ville);
+            top10[index].trajetsTotal = root->trajetsTotal;
+            top10[index].trajetsDepart = root->trajetsDepart;
+            (*count)++;
+        } else {
+            // Trouver la position où insérer si le tableau est plein
+            for (int i = 0; i < 10; i++) {
+                if (root->trajetsTotal > top10[i].trajetsTotal) {
+                    // Décaler les éléments pour faire de la place pour le nouveau
+                    for (int j = 9; j > i; j--) {
+                        strcpy(top10[j].ville, top10[j - 1].ville);
+                        top10[j].trajetsTotal = top10[j - 1].trajetsTotal;
+                        top10[j].trajetsDepart = top10[j - 1].trajetsDepart;
+                    }
+                    // Insérer le nouveau
+                    strcpy(top10[i].ville, root->ville);
+                    top10[i].trajetsTotal = root->trajetsTotal;
+                    top10[i].trajetsDepart = root->trajetsDepart;
+                    break;
+                }
             }
         }
-    }
 
-    a->v.hauteur = hauteur(a);
-    a->v.equilibre = equilibre(a);
-
-    int balance = a->v.equilibre;
-
-    if (balance > 1) {
-
-        if (a->fg->v.equilibre < 0) {
-            a->fg = rotation_fg(a->fg);
-        }
-
-        a = rotation_fd(a);
-    } 
-
-    else if (balance < -1) {
-
-        if (a->fd->v.equilibre > 0) {
-            a->fd = rotation_fd(a->fd);
-        }
-
-        a = rotation_fg(a);
-    }
-
-    return a;
-}
-
-void afficherTopDixPassages(Arbre* a, int* count) {
-    if (a != NULL && *count < 10) {
-        printf("Affichage avant a->fd\n");
-        afficherTopDixPassages(a->fd, count);
-
-        if (*count < 10) {
-            printf("Ville: %s\n", a->v.nom);
-            printf("Nombre de passages: %d\n", a->v.nbPassage);
-            printf("Nombre de départs: %d\n\n", a->v.nbDepart);
-            (*count)++;
-        }
-
-        printf("Affichage avant a->fg\n");
-        afficherTopDixPassages(a->fg, count);
+        updateTop10(root->right, top10, count);
     }
 }
 
+// Fonction pour afficher le top 10 dans le fichier
+void writeTop10ToFile(FILE *outputFile, Top10Info top10[]) {
+    for (int i = 0; i < 10; i++) {
+        fprintf(outputFile, "%s;%d;%d\n", top10[i].ville, top10[i].trajetsTotal, top10[i].trajetsDepart);
+    }
+}
+
+
+
+
+// Fonction pour libérer la mémoire allouée pour les nœuds de l'AVL
+void freeAVL(AVLNode *root) {
+    if (root != NULL) {
+        freeAVL(root->left);
+        freeAVL(root->right);
+        free(root);
+    }
+}
 
 int main() {
+    AVLNode *root = NULL;
 
-    FILE* fichier = fopen("../temp/temp_t.csv", "r");
+    // Spécifiez le chemin complet du fichier contenant les trajets
+    const char *filename = "./temp/temp_t.csv";
 
-    if (fichier == NULL) {
-        printf("Erreur lors de l'ouverture du fichier.\n");
-        return 1;
+    // Lecture des trajets à partir du fichier
+    readTrajetsFromFile(&root, filename);
+
+    // Vérification si l'arbre est vide
+    if (root == NULL) {
+        fprintf(stderr, "Erreur : Aucune donnée n'a été lue depuis le fichier ou le fichier est vide.\n");
+        return EXIT_FAILURE;
     }
 
-    Arbre* dernierVilleInseree = NULL;
-    Arbre* arbre = NULL;
-    int stepID;
-    char villeDepart[100], villeArrivee[100];
-    
-    int lines_read = 0;
-    int batch_count = 0;
-
-    while (fscanf(fichier, "%d;%99[^;];%99[^\n]", &stepID, villeDepart, villeArrivee) == 3) {
-      printf("Step ID: %d, Ville de départ: %s, Ville d'arrivée: %s\n", stepID, villeDepart, villeArrivee);
-        Ville nouvelleVilleDepart = {0};
-        Ville nouvelleVilleArrivee = {0};
-
-        strcpy(nouvelleVilleDepart.nom, villeDepart);
-        strcpy(nouvelleVilleArrivee.nom, villeArrivee);
-
-        if (dernierVilleInseree != NULL && strcmp(dernierVilleInseree->v.nom, villeDepart) == 0) {
-            nouvelleVilleDepart.nbDepart++;
-        }
-
-        arbre = insertion(arbre, nouvelleVilleDepart);
-        arbre = insertion(arbre, nouvelleVilleArrivee);
-
-        dernierVilleInseree = arbre;
-        
-        lines_read++;
-        batch_count++;
-        
-    if (batch_count >= MAX_LOT) {
-            // Traitement du lot actuel
-            int count = 0;
-            afficherTopDixPassages(arbre, &count);
-
-            // Réinitialisation pour le prochain lot
-            batch_count = 0;
-            arbre = NULL; // Réinitialisation de l'arbre pour le prochain lot
-        }
+    // Ouvrir le fichier de sortie en écriture
+    FILE *outputFile = fopen("./temp/histogram_datat.csv", "w");
+    if (outputFile == NULL) {
+        perror("Erreur lors de l'ouverture du fichier de sortie");
+        return EXIT_FAILURE;
     }
 
-    // Vérification si des données restent à traiter après la fin du fichier
-    if (batch_count > 0) {
-        int count = 0;
-        afficherTopDixPassages(arbre, &count);
+    // Initialiser le tableau pour le top 10
+    Top10Info top10[10];
+    for (int i = 0; i < 10; i++) {
+        top10[i].trajetsTotal = 0;
     }
 
-    fclose(fichier);
-  
-  int count = 0;
-  afficherTopDixPassages(arbre, &count);
+    // Mettre à jour les informations du top 10
+    int count = 0;
+    updateTop10(root, top10, &count);
 
-    return 0;
+    // Écrire le top 10 dans le fichier
+    writeTop10ToFile(outputFile, top10);
+
+    // Fermer le fichier de sortie
+    if (fclose(outputFile) != 0) {
+        perror("Erreur lors de la fermeture du fichier de sortie");
+        return EXIT_FAILURE;
+    }
+
+    // Libération de la mémoire allouée pour les nœuds de l'AVL
+    freeAVL(root);
+
+    return EXIT_SUCCESS;
 }
