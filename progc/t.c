@@ -2,172 +2,305 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct AVLNode {
+typedef struct {
+    int stepID;
+    char townA[50];
+    char townB[50];
+} Step;
+
+typedef struct AVL_Etapes {
+    Step etape;
+    struct AVL_Etapes *fg;
+    struct AVL_Etapes *fd;
+    int equilibre;
+} AVL_Etapes;
+
+typedef struct AVL {
     char ville[50];
     int trajetsTotal;
     int trajetsDepart;
-    struct AVLNode *left;
-    struct AVLNode *right;
-    int height;
-} AVLNode;
+    struct AVL_Etapes *etapes;
+    struct AVL *fg;
+    struct AVL *fd;
+    int equilibre;
+} AVL;
 
-AVLNode *createNode(char ville[]) {
-    AVLNode *newNode = (AVLNode *)malloc(sizeof(AVLNode));
-    strcpy(newNode->ville, ville);
-    newNode->trajetsTotal = 1;
-    newNode->trajetsDepart = 1;
-    newNode->left = newNode->right = NULL;
-    newNode->height = 1;
-    return newNode;
+// Prototypes des fonctions
+AVL *creerNoeud(char ville[]);
+AVL_Etapes *creerNoeudEtape(Step etape);
+int equilibre(AVL *noeud);
+int max(int a, int b);
+AVL *rotationDroite(AVL *y);
+AVL *rotationGauche(AVL *x);
+AVL *rotationDoubleDroite(AVL *racine);
+AVL *rotationDoubleGauche(AVL *racine);
+AVL_Etapes *rotationDroiteGaucheEtape(AVL_Etapes *racine);
+AVL_Etapes *rotationGaucheDroiteEtape(AVL_Etapes *racine);
+AVL_Etapes *rotationGaucheEtape(AVL_Etapes *x);
+AVL_Etapes *rotationDroiteEtape(AVL_Etapes *y);
+int equilibreEtape(AVL_Etapes *noeud);
+int getEquilibre(void *noeud);
+int getEquilibreEtape(AVL_Etapes *noeud);
+AVL_Etapes *insererEtape(AVL_Etapes *racine, Step etape, AVL_Etapes *precedenteEtape);
+AVL *inserer(AVL *racine, Step etape, int isDepart, AVL_Etapes *precedenteEtape);
+void parcoursInfixe(FILE *fichierSortie, AVL *racine);
+void lireTrajetsDepuisFichier(AVL **racine, int *nbEtapes, const char *nomFichier);
+typedef struct {
+    char ville[50];
+    int trajetsTotal;
+    int trajetsDepart;
+} InfoTop10;
+void mettreAJourTop10(AVL *racine, InfoTop10 top10[], int *compteur);
+void ecrireTop10DansFichier(FILE *fichierSortie, InfoTop10 top10[]);
+void libererAVL(AVL *racine);
+//
+
+AVL *creerNoeud(char ville[]) {
+    AVL *nouveauNoeud = (AVL *)malloc(sizeof(AVL));
+    strcpy(nouveauNoeud->ville, ville);
+    nouveauNoeud->trajetsTotal = 1;
+    nouveauNoeud->trajetsDepart = 1;
+    nouveauNoeud->fg = nouveauNoeud->fd = NULL;
+    nouveauNoeud->equilibre = 1;
+    return nouveauNoeud;
 }
 
-int height(AVLNode *node) {
-    if (node == NULL)
+int equilibre(AVL *noeud) {
+    if (noeud == NULL)
         return 0;
-    return node->height;
+    return noeud->equilibre;
 }
 
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
-AVLNode *rightRotate(AVLNode *y) {
-    AVLNode *x = y->left;
-    AVLNode *T2 = x->right;
+AVL *rotationDroite(AVL *y) {
+    AVL *x = y->fg;
+    AVL *T2 = x->fd;
 
-    x->right = y;
-    y->left = T2;
+    x->fd = y;
+    y->fg = T2;
 
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
+    y->equilibre = max(equilibre(y->fg), equilibre(y->fd)) + 1;
+    x->equilibre = max(equilibre(x->fg), equilibre(x->fd)) + 1;
 
     return x;
 }
 
-AVLNode *leftRotate(AVLNode *x) {
-    AVLNode *y = x->right;
-    AVLNode *T2 = y->left;
+AVL *rotationGauche(AVL *x) {
+    AVL *y = x->fd;
+    AVL *T2 = y->fg;
 
-    y->left = x;
-    x->right = T2;
+    y->fg = x;
+    x->fd = T2;
 
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
+    x->equilibre = max(equilibre(x->fg), equilibre(x->fd)) + 1;
+    y->equilibre = max(equilibre(y->fg), equilibre(y->fd)) + 1;
 
     return y;
 }
 
-int getBalance(AVLNode *node) {
-    if (node == NULL)
-        return 0;
-    return height(node->left) - height(node->right);
+AVL *rotationDoubleDroite(AVL *racine) {
+    racine->fg = rotationGauche(racine->fg);
+    return rotationDroite(racine);
 }
 
-AVLNode *insert(AVLNode *root, char ville[], int isDepart) {
-    if (root == NULL)
-        return createNode(ville);
+AVL *rotationDoubleGauche(AVL *racine) {
+    racine->fd = rotationDroite(racine->fd);
+    return rotationGauche(racine);
+}
 
-int compareResult = strcmp(ville, root->ville);
+AVL_Etapes *creerNoeudEtape(Step etape) {
+    AVL_Etapes *nouveauNoeud = (AVL_Etapes *)malloc(sizeof(AVL_Etapes));
+    nouveauNoeud->etape = etape;
+    nouveauNoeud->fg = nouveauNoeud->fd = NULL;
+    nouveauNoeud->equilibre = 1;
+    return nouveauNoeud;
+}
+
+int equilibreEtape(AVL_Etapes *noeud) {
+    if (noeud == NULL)
+        return 0;
+    return noeud->equilibre;
+}
+
+int getEquilibre(void *noeud) {
+    if (noeud == NULL)
+        return 0;
+    return ((AVL *)noeud)->equilibre;
+}
 
 
-    if (compareResult == 0) {
-        // La ville est déjà présente, mise à jour des totaux
-        root->trajetsTotal++;
-        if (isDepart)
-            root->trajetsDepart++;
-    } else if (compareResult < 0) {
-        root->left = insert(root->left, ville, isDepart);
+AVL_Etapes *insererEtape(AVL_Etapes *racine, Step etape, AVL_Etapes *precedenteEtape) {
+    if (racine == NULL)
+        return creerNoeudEtape(etape);
+
+    if (etape.stepID < racine->etape.stepID) {
+        racine->fg = insererEtape(racine->fg, etape, precedenteEtape);
+    } else if (etape.stepID > racine->etape.stepID) {
+        racine->fd = insererEtape(racine->fd, etape, precedenteEtape);
     } else {
-        root->right = insert(root->right, ville, isDepart);
+        // Même étape, vérifier les villes
+        if (precedenteEtape != NULL && etape.stepID == precedenteEtape->etape.stepID) {
+            // La même étape, ne pas augmenter le nombre de passages de l'étape actuelle
+            return racine;
+        } else if (strcmp(etape.townB, racine->etape.townA) == 0) {
+            // Les villes correspondent, ne pas augmenter le nombre de passages
+            racine->etape.stepID = etape.stepID;  // Mettre à jour le numéro de l'étape
+            return racine;
+        } else {
+        // Les villes ne correspondent pas, incrémenter les passages
+        racine->etape.stepID = etape.stepID;  // Mettre à jour le numéro de l'étape
+        racine->equilibre = max(equilibreEtape(racine->fg), equilibreEtape(racine->fd)) + 1;
+        racine->etape->trajetsDepart++;  // Incrémenter le nombre de départs
+    }
     }
 
-    root->height = 1 + max(height(root->left), height(root->right));
+    // Mettre à jour l'équilibre du nœud actuel
+    racine->equilibre = max(equilibreEtape(racine->fg), equilibreEtape(racine->fd)) + 1;
 
-    int balance = getBalance(root);
+    // Calculer le facteur d'équilibre
+    int equilibre = getEquilibreEtape(racine);
+
+    // Rééquilibrer l'arbre si nécessaire
+    if (equilibre > 1 && etape.stepID < racine->fg->etape.stepID)
+        return rotationDroiteGaucheEtape(racine);
+
+    if (equilibre < -1 && etape.stepID > racine->fd->etape.stepID)
+        return rotationGaucheDroiteEtape(racine);
+
+    if (equilibre > 1 && etape.stepID > racine->fg->etape.stepID) {
+        racine->fg = rotationGaucheEtape(racine->fg);
+        return rotationDroiteEtape(racine);
+    }
+
+    if (equilibre < -1 && etape.stepID < racine->fd->etape.stepID) {
+        racine->fd = rotationDroiteEtape(racine->fd);
+        return rotationGaucheEtape(racine);
+    }
+
+    return racine;
+}
+
+AVL *inserer(AVL *racine, Step etape, int isDepart, AVL_Etapes *precedenteEtape) {
+    if (racine == NULL) {
+        AVL *nouveauNoeud = creerNoeud(etape.townA);
+        nouveauNoeud->etapes = insererEtape(nouveauNoeud->etapes, etape, precedenteEtape);
+        return nouveauNoeud;
+    }
+
+    int resultatComparaison = strcmp(etape.townA, racine->ville);
+
+    if (resultatComparaison == 0) {
+        // La ville est déjà présente, mise à jour des totaux
+        racine->trajetsTotal++;
+
+        // Vérifier si la ville apparaît comme ville de départ ou d'arrivée
+        if (isDepart) {
+            racine->trajetsDepart++;
+        } else {
+            // Si la ville apparaît comme ville d'arrivée,
+            // alors c'est la deuxième occurrence, réinitialiser isDepart pour la prochaine étape
+            isDepart = 1;
+        }
+
+        racine->etapes = insererEtape(racine->etapes, etape, precedenteEtape);
+    } else if (resultatComparaison < 0) {
+        racine->fg = inserer(racine->fg, etape, isDepart, precedenteEtape);
+    } else {
+        racine->fd = inserer(racine->fd, etape, isDepart, precedenteEtape);
+    }
+
+    racine->equilibre = 1 + max(equilibre(racine->fg), equilibre(racine->fd));
+
+    int equilibre = getEquilibre(racine);
 
     // Rééquilibrage de l'arbre
-    if (balance > 1 && strcmp(ville, root->left->ville) < 0)
-        return rightRotate(root);
+    if (equilibre > 1 && strcmp(etape.townA, racine->fg->ville) > 0)
+        return rotationDoubleDroite(racine);
 
-    if (balance < -1 && strcmp(ville, root->right->ville) > 0)
-        return leftRotate(root);
+    if (equilibre < -1 && strcmp(etape.townA, racine->fd->ville) < 0)
+        return rotationDoubleGauche(racine);
 
-    if (balance > 1 && strcmp(ville, root->left->ville) > 0) {
-        root->left = leftRotate(root->left);
-        return rightRotate(root);
+    if (equilibre > 1 && strcmp(etape.townA, racine->fg->ville) < 0) {
+        racine->fg = rotationGauche(racine->fg);
+        return rotationDroite(racine);
     }
 
-    if (balance < -1 && strcmp(ville, root->right->ville) < 0) {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
+    if (equilibre < -1 && strcmp(etape.townA, racine->fd->ville) > 0) {
+        racine->fd = rotationDroite(racine->fd);
+        return rotationGauche(racine);
     }
 
-    return root;
+    return racine;
 }
 
 
-
-void inOrderTraversal(FILE *outputFile, AVLNode *root) {
-    if (root != NULL) {
-        inOrderTraversal(outputFile, root->right); // Inverser l'ordre ici
-        fprintf(outputFile, "%s - Trajets Total: %d, Trajets Départ: %d\n", root->ville, root->trajetsTotal, root->trajetsDepart);
-        inOrderTraversal(outputFile, root->left); // Inverser l'ordre ici
+void parcoursInfixe(FILE *fichierSortie, AVL *racine) {
+    if (racine != NULL) {
+        parcoursInfixe(fichierSortie, racine->fd);
+        fprintf(fichierSortie, "%s - Trajets Total: %d, Trajets Départ: %d\n", racine->ville, racine->trajetsTotal, racine->trajetsDepart);
+        parcoursInfixe(fichierSortie, racine->fg);
     }
 }
 
-
-void readTrajetsFromFile(AVLNode **root, const char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
+void lireTrajetsDepuisFichier(AVL **racine, int *nbEtapes, const char *nomFichier) {
+    FILE *fichier = fopen(nomFichier, "r");
+    if (fichier == NULL) {
         perror("Erreur lors de l'ouverture du fichier");
         exit(EXIT_FAILURE);
     }
 
-    char line[1000]; // Assurez-vous que la taille est suffisante pour contenir une ligne complète
+    char ligne[1000];
     char villeA[50];
     char villeB[50];
+    int stepID;
 
-    while (fgets(line, sizeof(line), file) != NULL) {
-        // Utilisez sscanf pour extraire les villes du format "villeA;villeB"
-        if (sscanf(line, "%49[^;];%49[^;\n]", villeA, villeB) == 2) {
-            *root = insert(*root, villeB, 1); // Ville B en tant que départ (modification ici)
-            *root = insert(*root, villeA, 0); // Ville A en tant qu'arrivée (modification ici)
+    typedef struct {
+        int stepID;
+        char townA[50];
+        char townB[50];
+    } Step;
+
+    while (fgets(ligne, sizeof(ligne), fichier) != NULL) {
+        if (sscanf(ligne, "%d;%49[^;];%49[^;\n]", &stepID, villeA, villeB) == 3) {
+            // Ajouter l'étape à l'arbre AVL
+            Step nouvelleEtape;
+            nouvelleEtape.stepID = stepID;
+            strcpy(nouvelleEtape.townA, villeA);
+            strcpy(nouvelleEtape.townB, villeB);
+
+            *racine = insererEtape(*racine, nouvelleEtape, NULL);
+            (*nbEtapes)++;
         } else {
-            fprintf(stderr, "Erreur de format dans la ligne : %s\n", line);
+            fprintf(stderr, "Erreur de format dans la ligne : %s\n", ligne);
         }
     }
 
     // Fermer le fichier après la lecture
-    if (fclose(file) != 0) {
+    if (fclose(fichier) != 0) {
         perror("Erreur lors de la fermeture du fichier");
         exit(EXIT_FAILURE);
     }
 }
 
-
-
-typedef struct {
-    char ville[50];
-    int trajetsTotal;
-    int trajetsDepart;
-} Top10Info;
-
 // Fonction pour parcourir l'arbre en infixe et mettre à jour les informations du top 10
-void updateTop10(AVLNode *root, Top10Info top10[], int *count) {
-    if (root != NULL) {
-        updateTop10(root->left, top10, count);
+void mettreAJourTop10(AVL *racine, InfoTop10 top10[], int *compteur) {
+    if (racine != NULL) {
+        mettreAJourTop10(racine->fg, top10, compteur);
 
         // Mettre à jour le top 10 avec les informations actuelles
-        int index = *count;
+        int index = *compteur;
         if (index < 10) {
-            strcpy(top10[index].ville, root->ville);
-            top10[index].trajetsTotal = root->trajetsTotal;
-            top10[index].trajetsDepart = root->trajetsDepart;
-            (*count)++;
+            strcpy(top10[index].ville, racine->ville);
+            top10[index].trajetsTotal = racine->trajetsTotal;
+            top10[index].trajetsDepart = racine->trajetsDepart;
+            (*compteur)++;
         } else {
             // Trouver la position où insérer si le tableau est plein
             for (int i = 0; i < 10; i++) {
-                if (root->trajetsTotal > top10[i].trajetsTotal) {
+                if (racine->trajetsTotal > top10[i].trajetsTotal) {
                     // Décaler les éléments pour faire de la place pour le nouveau
                     for (int j = 9; j > i; j--) {
                         strcpy(top10[j].ville, top10[j - 1].ville);
@@ -175,80 +308,90 @@ void updateTop10(AVLNode *root, Top10Info top10[], int *count) {
                         top10[j].trajetsDepart = top10[j - 1].trajetsDepart;
                     }
                     // Insérer le nouveau
-                    strcpy(top10[i].ville, root->ville);
-                    top10[i].trajetsTotal = root->trajetsTotal;
-                    top10[i].trajetsDepart = root->trajetsDepart;
+                    strcpy(top10[i].ville, racine->ville);
+                    top10[i].trajetsTotal = racine->trajetsTotal;
+                    top10[i].trajetsDepart = racine->trajetsDepart;
                     break;
                 }
             }
         }
 
-        updateTop10(root->right, top10, count);
+        mettreAJourTop10(racine->fd, top10, compteur);
     }
 }
 
 // Fonction pour afficher le top 10 dans le fichier
-void writeTop10ToFile(FILE *outputFile, Top10Info top10[]) {
+void ecrireTop10DansFichier(FILE *fichierSortie, InfoTop10 top10[]) {
     for (int i = 0; i < 10; i++) {
-        fprintf(outputFile, "%s;%d;%d\n", top10[i].ville, top10[i].trajetsTotal, top10[i].trajetsDepart);
+        fprintf(fichierSortie, "%s;%d;%d\n", top10[i].ville, top10[i].trajetsTotal, top10[i].trajetsDepart);
     }
 }
 
-
-
-
 // Fonction pour libérer la mémoire allouée pour les nœuds de l'AVL
-void freeAVL(AVLNode *root) {
-    if (root != NULL) {
-        freeAVL(root->left);
-        freeAVL(root->right);
-        free(root);
+void libererAVL(AVL *racine) {
+    if (racine != NULL) {
+        libererAVL(racine->fg);
+        libererAVL(racine->fd);
+        free(racine);
     }
 }
 
 int main() {
-    AVLNode *root = NULL;
+    AVL *racine = NULL;
+    AVL_Etapes *racineEtapes = NULL;
+    Step *etapes = NULL;
+    int nbEtapes = 0;
 
     // Spécifiez le chemin complet du fichier contenant les trajets
-    const char *filename = "./temp/temp_t.csv";
+    const char *nomFichierEtapes = "./temp/temp_t.csv";
+    const char *nomFichierSortie = "./temp/histogram_datat.csv";
 
-    // Lecture des trajets à partir du fichier
-    readTrajetsFromFile(&root, filename);
+    // Lecture des trajets à partir du fichier et mise à jour des étapes
+    lireTrajetsDepuisFichier(&racineEtapes, &nbEtapes, nomFichierEtapes);
 
     // Vérification si l'arbre est vide
-    if (root == NULL) {
+    if (racine == NULL) {
+        fprintf(stderr, "Erreur : Aucune donnée n'a été lue depuis le fichier ou le fichier est vide.\n");
+        return EXIT_FAILURE;
+    }
+    
+    // Vérification si l'arbre est vide
+    if (racineEtapes == NULL) {
         fprintf(stderr, "Erreur : Aucune donnée n'a été lue depuis le fichier ou le fichier est vide.\n");
         return EXIT_FAILURE;
     }
 
     // Ouvrir le fichier de sortie en écriture
-    FILE *outputFile = fopen("./temp/histogram_datat.csv", "w");
-    if (outputFile == NULL) {
+    FILE *fichierSortie = fopen("./temp/histogram_datat.csv", "w");
+    if (fichierSortie == NULL) {
         perror("Erreur lors de l'ouverture du fichier de sortie");
         return EXIT_FAILURE;
     }
 
     // Initialiser le tableau pour le top 10
-    Top10Info top10[10];
+    InfoTop10 top10[10];
     for (int i = 0; i < 10; i++) {
         top10[i].trajetsTotal = 0;
     }
 
     // Mettre à jour les informations du top 10
-    int count = 0;
-    updateTop10(root, top10, &count);
+    int compteur = 0;
+    mettreAJourTop10(racine, top10, &compteur);
 
     // Écrire le top 10 dans le fichier
-    writeTop10ToFile(outputFile, top10);
+    ecrireTop10DansFichier(fichierSortie, top10);
 
     // Fermer le fichier de sortie
-    if (fclose(outputFile) != 0) {
+    if (fclose(fichierSortie) != 0) {
         perror("Erreur lors de la fermeture du fichier de sortie");
         return EXIT_FAILURE;
     }
 
     // Libération de la mémoire allouée pour les nœuds de l'AVL
-    freeAVL(root);
+    libererAVL(racine);
+
+    // Libération de la mémoire allouée pour les étapes
+    free(etapes);
 
     return EXIT_SUCCESS;
 }
