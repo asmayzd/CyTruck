@@ -93,8 +93,26 @@ case $choix in
     1) chemin_script="traitement/d1" ;;
     2) chemin_script="traitement/d2" ;;
     3) chemin_script="traitement/l" ;;
-    4) chemin_script="traitement/t" ;;
-    5) chemin_script="traitement/s" ;;
+    4)
+        if [ ! -f "progc/t" ]; then
+            gcc -o progc/t progc/t.c
+            # Vérifier si la compilation s'est bien déroulée
+            if [ $? -ne 0 ]; then
+                echo "Erreur de compilation"
+                exit 1
+            fi
+        fi
+        chemin_script="traitement/t" ;;
+    5)
+        if [ ! -f "progc/s" ]; then
+            gcc -o progc/s progc/s.c
+            # Vérifier si la compilation s'est bien déroulée
+            if [ $? -ne 0 ]; then
+                echo "Erreur de compilation"
+                exit 2
+            fi
+        fi
+        chemin_script="traitement/s" ;;
     6) cat "help.txt" ;;
 esac
 
