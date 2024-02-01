@@ -1,23 +1,53 @@
-#!/bin/bash
++#!/bin/bash
+
 
 chmod 777 traitement/s
 chmod 777 temp/temp_s.csv
 chmod 777 progc/s.c
 
 s() {
-     cut -d';' -f1,5 data/data.csv | tail -n +2 > temp/temp_s.csv
+	cut -d';' -f1,2,5 data/data.csv | tail -n +2 > temp/temp_s2.csv     
 
     # Compiler t.c pour créer un exécutable
     gcc -o progc/s progc/s.c
 
     # Exécuter le programme C
-    ./progc/s < temp/temp_s.csv
-        cat temp/histogram_datas.csv
+    ./progc/s < temp/temp_s2.csv
+        head -n 50 temp/temp_s.csv > temp/histogram_datas.csv
+	cat temp/histogram_datas.csv
 
     # Revenir au répertoire précédent si nécessaire
     cd .
 
+	 generate_s
+
 }
 
+generate_s() {
+    # Vérification si le fichier existe
+    if [ ! -f "temp/histogram_datas.csv" ]; then
+        echo "Le fichier 'temp/histogram_datas.csv' n'existe pas."
+        exit 1
+    fi
+
+    # Partie graphique (gnuplot)
+    gnuplot << EOF
+
+    # Ouverture du script Gnuplot
+        set terminal png # Définit le type de fichier de sortie comme une image PNG
+        set output 'images/graphique_s.png' # Définit le nom et l'emplacement du fichier de sortie
+        set datafile separator ";"
+
+        # Configuration du tracé
+        set key bmargin center horizontal
+	set title "Graphique -s" 
+        set xlabel "Route ID"
+        set ylabel "Distance"
+        Shadecolor = "#80E0A080"
+        # Tracer les données à partir du fichier
+        plot [*:*] [*:*] 'temp/histogram_datas.csv' using 1:3:4 with filledcurve fc rgb Shadecolor title "Distance max/min", '' using 1:2 smooth mcspline title "Distance moyenne"
+
+EOF
+}
 
 s
