@@ -43,7 +43,7 @@ generate_t() {
     fi
 
     # Partie graphique (gnuplot)
-    gnuplot << EOF
+    gnuplot <<-GNUPLOT_SCRIPT
 
     # Ouverture du script Gnuplot
         set terminal png # Définit le type de fichier de sortie comme une image PNG
@@ -64,7 +64,7 @@ generate_t() {
         plot 'temp/histogram_datat.csv' using 2:xtic(1) title "Nombre de passage", \
      '' using 3 title "Nombre de depart"
 
-EOF
+GNUPLOT_SCRIPT
 }
 
 t
