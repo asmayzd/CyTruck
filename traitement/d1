@@ -14,6 +14,12 @@ d1() {
 
     cat temp/temp_d1.csv
 	
+	# Créer un fichier de données pour l'histogramme
+    awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv | sort -t',' -k2,2n > temp/histogram_data.csv
+
+    # Appel de la fonction pour tracer le graphique
+    generate_d1
+
 	fin_timer_d1=$(date +%s)
 
         # Calculez la durée totale en secondes.
@@ -22,11 +28,9 @@ d1() {
         # Affichez la durée.
         echo  "\nLe traitement de l'option -d1 a pris $duree_option_d1 secondes.\n"
 
-    # Créer un fichier de données pour l'histogramme
-    awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv | sort -t',' -k2,2n > temp/histogram_data.csv
+	# Ouvre automatiquement l'image du graphique
+        display images/graphique_d1.png
 
-    # Appel de la fonction pour tracer le graphique
-    generate_d1
 }
 
 generate_d1() {
@@ -48,7 +52,7 @@ fi
         set boxwidth 0.5
         set offsets 0,0,0.5-0.5/2,0.5
         set yrange [0:*]  # Utilisez la plage par défaut pour l'axe y
-        set title 'Top 10 des conducteurs avec le plus de trajets'
+        set title 'Graphique -d1'
         set ylabel 'Noms des conducteurs'
         set xlabel 'Nombre de trajets'
 		
@@ -58,9 +62,7 @@ fi
         plot 'temp/histogram_data.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
 GNUPLOT_SCRIPT
 
-        # Ouvre automatiquement l'image du graphique
-        display images/graphique_d1.png
-#mogrify -rotate "-90" images/graphique_d1.png
+        #mogrify -rotate "-90" images/graphique_d1.png
 
 
 # Rotation de l'image pour avoir un histogramme horizontal
