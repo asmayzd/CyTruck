@@ -1,6 +1,5 @@
 Bienvenue sur le fichier d'aide du projet Cy-Trucks : 
 
-
  Voici la liste des options diponible :
 
     - En choisissant l'option "h" vous aurez accès à ce fichier, le fichier d'aide dans lequel sont enuméré et expliqué toutes les options possibles de notre projet.
