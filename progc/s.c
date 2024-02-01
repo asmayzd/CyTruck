@@ -1,7 +1,7 @@
 #define OPTION_S
 #define OPTION_S
 
-#include "optionS.h"
+#include "s.h"
 
 typedef struct _DistanceNode {
     float distance;
