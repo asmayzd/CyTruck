@@ -13,20 +13,20 @@ d1() {
     awk -F";" '/;1;/ {compteur[$6] += 1} END {for (nom in compteur) print compteur[nom], nom}' data/data.csv | sort -nrk1,1 | head -10 > temp/temp_d1.csv
 
     cat temp/temp_d1.csv
-	
-	# Créer un fichier de données pour l'histogramme
-    awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv | sort -t',' -k2,2n > temp/histogram_data.csv
 
-    # Appel de la fonction pour tracer le graphique
-    generate_d1
-
-	fin_timer_d1=$(date +%s)
+fin_timer_d1=$(date +%s)
 
         # Calculez la durée totale en secondes.
         duree_option_d1=$((fin_timer_d1 - debut_timer_d1))
 
         # Affichez la durée.
         echo  "\nLe traitement de l'option -d1 a pris $duree_option_d1 secondes.\n"
+	
+	# Créer un fichier de données pour l'histogramme
+    awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv | sort -t',' -k2,2n > temp/histogram_data.csv
+
+    # Appel de la fonction pour tracer le graphique
+    generate_d1
 
 	# Ouvre automatiquement l'image du graphique
         display images/graphique_d1.png
