@@ -38,7 +38,7 @@ typedef struct _node{
     struct _node* pNext;    //pointeur vers prochain chainon
 } NODE;
 
-NODE * createNode (char word[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
+NODE * createNode (char word[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){ //création d'un nouveau noeud
     NODE* pNew = malloc(sizeof(NODE));
     if (pNew == NULL){
         exit(2);
@@ -50,7 +50,7 @@ NODE * createNode (char word[], int NB_apparition_par_trajet, int NB_apparition_
     return pNew;
 }
 
-NODE* addStart (NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
+NODE* addStart (NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){  //ajout en début de liste 
     NODE * pNew = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
     if (pNew == NULL){
         exit(2601); //pour strcmp()
@@ -66,7 +66,7 @@ NODE* addStart (NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_a
     }
 }
 
-NODE * addEnd(NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
+NODE * addEnd(NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){  //ajout en fin de liste 
     NODE* pNew = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
     NODE* pList = pHead;
     if (pNew == NULL){
@@ -96,7 +96,7 @@ void addBetweenNodes(NODE* pList, char nom[], int NB_apparition_par_trajet, int 
     pList->pNext = pNew;
 }
 
-NODE* insertNode(NODE* pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
+NODE* insertNode(NODE* pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){ // inserer dans la liste
     //CAS 1 : pas de mot dans la liste
     if (pHead == NULL){
         pHead = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
@@ -129,7 +129,7 @@ NODE* insertNode(NODE* pHead, char nom[], int NB_apparition_par_trajet, int NB_a
     return pHead;
 }
 
-void displayList(NODE* pHead){
+void displayList(NODE* pHead){  //afficher la liste
     if (pHead == NULL){
         exit(2606);
     }
@@ -140,7 +140,7 @@ void displayList(NODE* pHead){
     }
 }
 
-void destroyNode(NODE* pNode) {
+void destroyNode(NODE* pNode) {  //supprimer un chainon
     if (pNode != NULL) {
         destroyNode(pNode->pNext);
         free(pNode);
@@ -148,7 +148,7 @@ void destroyNode(NODE* pNode) {
     }
 }
 
-//----------------- Création des NOEUDS -----------------
+//Création des NOEUDS 
 
 // 1) CreateNode spécifique pour Route_ID
 Node_RouteID* create_Node_RouteID(int RouteID){
@@ -164,7 +164,7 @@ Node_RouteID* create_Node_RouteID(int RouteID){
     return pNew;
 }
 
-// 2) CreateNode général
+// 2) creer arbre général
 Tree* createTree(char nom[], int Route_ID){
     Tree* pNew = malloc(sizeof(Tree));
     if(pNew == NULL){
@@ -191,7 +191,7 @@ Tree* createTree(char nom[], int Route_ID){
     return pNew;
 }
 
-//----------------- ROTATIONS SIMPLES -----------------
+//ROTATIONS SIMPLES:
 // 1) Rotations spécifiques pour Route_ID
 Node_RouteID* RotationGauche_RouteID(Node_RouteID* p_RouteID){
     if (p_RouteID==NULL || p_RouteID->pR == NULL){
@@ -444,7 +444,7 @@ Tree* RotationDroite(Tree* p){
 }
 
 
-//----------------- DOUBLES ROTATIONS -----------------
+//DOUBLES ROTATIONS 
 
 // 1) Doubles rotations spécifiques pour Route_ID
 Node_RouteID* DoubleRotationGauche_RouteID(Node_RouteID* p_RouteID){
@@ -507,7 +507,7 @@ Tree* DoubleRotationGauche(Tree* p){
     return p;
 }
 
-Tree* DoubleRotationDroite(Tree* p){
+Tree* DoubleRotationDroite(Tree* p){                                                                
     if (p==NULL || p->pL==NULL || p->equilibre!=-2 || p->pL->equilibre!=1){
         printf("Cas non pris en charge 30 : pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
         exit(30);
@@ -529,7 +529,7 @@ Tree* DoubleRotationDroite(Tree* p){
 
 
 
-//----------------- EQUILIBRAGE -----------------
+// EQUILIBRAGE 
 
 //1) Equilibrage spécifique pour Route_ID
 Node_RouteID* equilibrerAVL_RouteID(Node_RouteID* p_RouteID){
@@ -664,14 +664,10 @@ Tree* equilibrerAVL(Tree* p){
 
 
 
-//---------------------------------- INSERTION AVL ----------------------------------
-
+//INSERTION AVL 
 // 1) Insertion AVL spécifique pour Route_ID
-Node_RouteID* insertAVL_RouteID (Tree* p, Node_RouteID* p_RouteID, int v, int* h){
-    /*  ATTENTION, ici:
-            -> v est mon RouteID
-            -> p_RouteID = p->AVL_RouteID
-    */
+
+Node_RouteID* insertAVL_RouteID (Tree* p, Node_RouteID* p_RouteID, int v, int* h){  //p_RouteID = p->AVL_RouteID
     //TEST
     if (p == NULL || h == NULL){
         printf("Erreur 1600 : pointeur NULL.\n");
@@ -712,7 +708,6 @@ Node_RouteID* insertAVL_RouteID (Tree* p, Node_RouteID* p_RouteID, int v, int* h
             *h = 1;
         }
     }
-    // return the address (may be new)
     return p_RouteID;
 }
 
@@ -758,7 +753,7 @@ Tree* insertAVL_numerique (Tree* p, Tree* p_copie, int* h){ // AVL trié avec de
             *h = 1;
         }
     }
-    // return the address (may be new)
+    // return l'adresse 
     return p;
 }
 
@@ -805,7 +800,7 @@ Tree* insertAVL_alphabetique (Tree* p, int Route_ID, char nom_ville[], int ville
         *h = -*h;
     }
     else {
-        // On a trouvé le même nom de ville : on ne fait rien
+        // Si on a trouvé le même nom de ville : on ne fait rien
         // strcmp(nom, p->ville) == 0
         if (ville_Arrivee == 1){
             p->nb_apparition_ville_depart_trajet = p->nb_apparition_ville_depart_trajet + 1 ;
@@ -843,14 +838,8 @@ Tree* insertAVL_alphabetique (Tree* p, int Route_ID, char nom_ville[], int ville
     return p;
 }
 
-Tree* selection_insertAVL_alphabetique (Tree* p, char villeA[], char villeB[], int Route_ID, int etape, int* h){
-    /*
-    Cette fonction permet d'insérer dans l'AVL alphabétique:
-        -> villeA et villeB si etape==1
-        -> villeB sinon
-    Cela permet d'insérer toutes les villes rencontrées dans un trajet.
-
-    La fonction insertAVL_alphabetique s'occupe d'ajouter :
+Tree* selection_insertAVL_alphabetique (Tree* p, char villeA[], char villeB[], int Route_ID, int etape, int* h){  //insertion dans AVL toute les villes d'un trajet 
+    /* La fonction insertAVL_alphabetique s'occupe d'ajouter :
         -> +1 à nb_apparition_ville_depart_trajet si : on veut insérer villeA et etape==1
         -> +1 à nb_apparition_ville_arrivee_etape si : on veut insérer villeB et etape>=1
     */
@@ -877,7 +866,7 @@ Tree* selection_insertAVL_alphabetique (Tree* p, char villeA[], char villeB[], i
 }
 
 
-//---------------------------------- Destruction AVL ----------------------------------
+//Destruction AVL
 
 // 1) destroyAVL spécifique pour Route_ID
 void destroyAVL_RouteID(Node_RouteID* p_RouteID) {
@@ -1024,42 +1013,10 @@ Tree * copie_AVL (Tree* p_origine){
 }
 
 
-//----------------- 10 VILLES LES + TRAVERSEES -----------------
-
-/*
-EXPLICATIONS et FONCTIONNEMENT:
-    Le nouvel AVL va parcourir l'entièreté de l'AVL trié par ordre alphabétique de nom de ville,
-    mais il sera trié par ordre numérique d'apparition de ville.
-    Dans cet AVL, les doublons sont autorisés et sont mis en FILS DROIT.
-    Si cet emplacement est déjà pris, il deviendra le fils gauche du fils droit ...
-
-    EXEMPLE : Ici nous ajoutons dans l'AVL déjà formé : ville H (nb_apparition : 120)
-              ville H devient fils gauche de ville G.
-
-                                                                        ville A
-                                                                    (nb_apparition : 112)
-
-                                       ville B                                                             ville C
-                                (nb_apparition : 60)                                                (nb_apparition : 120)
-
-                       ville D                       ville E                           ville F                                ville G
-                (nb_apparition : 50)            (nb_apparition : 60)            (nb_apparition : 110)                  (nb_apparition : 122)
-
-                                                                                                                        ville H      <-------- VILLE AJOUTEE
-                                                                                                                (nb_apparition : 120)
-
-    Si on ajoute ville I (nb_apparition : 120), ce sera le fils droit de ville H.
-    Pour avoir les 10 villes les plus parcourues, on fait un parcours INFIXE INVERSE (Fils Droit, puis Racine, puis Fils Gauche).
-*/
-
+//10 VILLES LES + TRAVERSEES 
+       
 Tree * transforme_AVLalphab_en_AVLnum(Tree* p_alphabetique, Tree* p_numerique, int* h){
-    /* int* h est utile pour la fonction insertAVL_numerique, il permet de rééquilibrer l'AVL numérique à chaque nouvelle insertion de noeud.
-
-    ATTENTION : en appelant transforme_AVLalphab_en_AVLnum, l'adresse de h (mise en paramètre) ne doit pas être NULL.
-    Avant l'appel de la fonction, écrire : int* h = malloc(sizeof(int));
-    Après l'appel de la fonction, écrire : free(h);
-    */
-    //TEST
+   
     if (h == NULL){
         printf("Erreur 1000 : pointeur NULL.\n");
         exit(1000);
