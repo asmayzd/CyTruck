@@ -16,20 +16,19 @@ d2(){
 
 	cat temp/temp_d2.csv
 
-	
-    # Créer un fichier de données pour l'histogramme
-     awk -F';' '{print $2 "," $1}' temp/temp_d2.csv | sort -t',' -k2,2n > temp/histogram_datad2.csv
-
- # Appel de la fonction pour tracer le graphique
-    generate_d2
-
-	fin_timer_d2=$(date +%s)
+fin_timer_d2=$(date +%s)
 
         # Calculez la durée totale en secondes.
         duree_option_d2=$((fin_timer_d2 - debut_timer_d2))
 
         # Affichez la durée.
         echo  "\nLe traitement de l'option -d2 a pris $duree_option_d2 secondes.\n"
+	
+    # Créer un fichier de données pour l'histogramme
+     awk -F';' '{print $2 "," $1}' temp/temp_d2.csv | sort -t',' -k2,2n > temp/histogram_datad2.csv
+
+ # Appel de la fonction pour tracer le graphique
+    generate_d2
 
 	 # Ouvre automatiquement l'image du graphique
         display images/graphique_d2.png
