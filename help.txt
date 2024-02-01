@@ -1,10 +1,6 @@
 Bienvenue sur le fichier d'aide du projet Cy-Trucks : 
 
 
-Tout d'abord, pour lancer le programme taper la ligne suivante dans le terminal :
-    - "./donee_filtre.bash data/datacsv" suivie du chemin vers lequel se trouve le fichier de données. 
-
-
  Voici la liste des options diponible :
 
     - En choisissant l'option "h" vous aurez accès à ce fichier, le fichier d'aide dans lequel sont enuméré et expliqué toutes les options possibles de notre projet.
