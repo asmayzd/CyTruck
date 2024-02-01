@@ -36,7 +36,9 @@ fi
 
 if ! command -v gnuplot >/dev/null 2>&1; then
     echo "Gnuplot could not be found"
+      # Mise à jour des dépôts
         sudo apt-get update
+	# Installation de Gnuplot
         sudo apt-get install gnuplot
 fi
 
