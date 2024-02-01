@@ -3,18 +3,87 @@
 # Assurer que le script.sh a les permissions d'exécution
 chmod 777 script.sh
 
+check_dossiertemp() {
+    if [ ! -d "temp" ]; then
+        mkdir temp
+    fi
+}
+
+check_dossierimages() {
+    if [ ! -d "images" ]; then
+        mkdir images
+    fi
+}
+
+clean_temp() {
+    rm -rf temp/*
+}
+
+clean_images() {
+    rm -rf images/*
+}
+
+if [ ! -f "data/data.csv" ]; then
+    echo "Erreur : Le fichier CSV 'data.csv' n'existe pas."
+    exit 1
+fi
+
+if ! command -v gnuplot >/dev/null 2>&1; then
+    echo "Gnuplot could not be found"
+	sudo apt-get update
+	sudo apt-get install gnuplot
+fi
+
+if ! command -v gnuplot >/dev/null 2>&1; then
+    echo "Gnuplot could not be found"
+        sudo apt-get update
+        sudo apt-get install gnuplot
+fi
+
+if ! command -v convert >/dev/null 2>&1; then
+    echo "ImageMagick could not be found"
+    # Mise à jour des dépôts
+    sudo apt-get update
+    # Installation de ImageMagick
+    sudo apt-get install imagemagick
+fi
+
+# Fonction pour vérifier l'installation du gnuplot
+check_gnuplot() {
+    if ! command -v gnuplot >/dev/null 2>&1; then
+        echo "Gnuplot installation failed"
+    fi
+}
+
+
+# Fonction pour vérifier l installation d'ImageMagick
+check_imagemagick() {
+    if ! command -v convert >/dev/null 2>&1; then
+        echo "ImageMagick installation failed"
+    fi
+}
+
+
+check_dossiertemp
+check_dossierimages
+clean_temp
+clean_images
+
+check_gnuplot
+check_imagemagick
 choix=""
-while ! [[ "$choix" =~ ^[1-5]$ ]]; do
+while ! [[ "$choix" =~ ^[1-6]$ ]]; do
     echo "====== Bienvenue ! Choisissez une fonction : ====="
     echo "1. Fonction -d1"
     echo "2. Fonction -d2"
     echo "3. Fonction -l"
     echo "4. Fonction -t"
     echo "5. Fonction -s"
-    read -p "Entrez le numéro de la fonction que vous voulez exécuter : " choix
+    echo "6. Aide"
+	read -p "Entrez le numéro de la fonction que vous voulez exécuter : " choix
 
-if ! [[ "$choix" =~ ^[1-5]$ ]]; then
-        echo "Choix invalide. Veuillez entrer un numéro de fonction entre 1 et 5."
+if ! [[ "$choix" =~ ^[1-6]$ ]]; then
+        echo "Choix invalide. Veuillez entrer un numéro de fonction entre 1 et 6."
     fi
 done
 
@@ -24,6 +93,7 @@ case $choix in
     3) chemin_script="traitement/l" ;;
     4) chemin_script="traitement/t" ;;
     5) chemin_script="traitement/s" ;;
+    6) chemin_script="help.txt" ;;
 esac
 
 if [ -f "$chemin_script" ]; then

@@ -9,7 +9,7 @@ l() {
         # Enregistrez le temps de début.
         debut_timer_l=$(date +%s)
 
-	awk -F";"  '{compteur[$1] += $5} END {for (id_trajet in compteur) print id_trajet ";" compteur[id_trajet]}' data/data.csv |
+	awk -F";"  '{trajet=$1;distance=$5; if(trajet!=""&&distance!=""){sum[trajet]+=distance;}}END {for(trajet in sum){printf"%d;%d\n", trajet, sum[trajet];}}' data/data.csv |
 sort -t";" -k2nr | head -10 | sort -t";" -k1n > temp/temp_l.csv
 
 
