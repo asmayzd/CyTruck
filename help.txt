@@ -1,0 +1,11 @@
+Bienvenue sur le fichier d'aide du projet Cy-Trucks : 
+
+
+ Voici la liste des options diponible :
+
+    - En choisissant l'option "h" vous aurez accès à ce fichier, le fichier d'aide dans lequel sont enuméré et expliqué toutes les options possibles de notre projet.
+    - En choisissant l'option "d1" les 10 conducteurs avec le nombre de trajets les plus élevés seront affichés.
+    - En choisissant l'option "d2" les 10 conducteurs avec la plus grande distance parcourue seront affichés.
+    - En choisissant l'option "l" les 10 trajets les plus longs seront affichés.
+    - En choisissant l'option "t" les 10 villes les plus freéquentées seront affichées.
+    - En choisissant l'option "s" vous trouverez les statistiques sur les étapes.

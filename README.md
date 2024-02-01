@@ -1,1 +1,110 @@
 # Cytruck
+
+# Projet-CYtruck
+Mecherfi Badr MEF2; Yazidi Asma MEF2; Elomri Hafsa MEF2.
+
+# Introduction
+Nous avons réalisé un programme permettant de gérer la logistique d'une société nationale de transport.
+
+# Instruction
+Sur le menu d'accueil: 
+- En choisissant l'option "h" vous aurez accès au fichier d'aide dans lequel sont enuméré et expliqué toutes les options possibles de notre projet.
+- En choisissant l'option "d1" les 10 conducteurs avec le nombre de trajets les plus élevés seront affichés.
+- En choisissant l'option "d2" les 10 conducteurs avec la plus grande distance parcourue seront affichés.
+- En choisissant l'option "l" les 10 trajets les plus longs seront affichés.
+- En choisissant l'option "t" les 10 villes les plus freéquentées seront affichées.
+- En choisissant l'option "s" vous trouverez les statistiques sur les étapes.
+
+
+# Objectifs réussis
+- Nous avons réussi à travailler en équipe malgrè les difficultés de certains.
+- Malgré les difficultés rencontrées nous avons réussi à programmer l'option "t".
+- A part le gnuplot, les options "d1" et "d2" ont été relativement faciles à coder et fonctionnent bien.
+- Les options affichent bien ce qui a été demandé.
+- Malgré les difficultés rencontrées nous avons réussi à réaliser les graphiques. Ils affichent sous la bonne forme les bonnes informations.
+
+
+
+# Problèmes rencontrés
+- Nous avons eu du mal à gérer le temps d'exécution, par exemple le temps d'exécution de l'option "l" dépasse une fois sur deux le temps autorisé.
+- Les options "t" et "s" ont été les plus durs à réaliser.
+- Le gnuplot a été difficile réaliser.
+
+# Répartition des tâches :
+
+| Membre du groupe                                                | Description de la tâche à faire                  |
+| ----------------------------------------------------            | ------------------------------------             |
+| `Asma`                                                          | -> Traitement T                                           
+|                                                                 | -> Génération des graphiques  
+|                                                                 | -> Gestion du temps d'exécution
+|                                                                 | -> Sécurisation des programmes
+|                                                                 | -> Page d'accueil/main    
+| `Badr`                                                          | -> Traitement s
+|                                                                 | -> Traitement d2 
+| `Hafsa`                                                         | -> makefile
+|                                                                 | -> Readme
+|                                                                 | -> fichier aide
+| `Asma, Badr et Hafsa`                                           | -> Gestion des erreurs dans la globalité
+|                                                                 | -> Réaliser ensemble les traitements où nous avons rencontré des difficultés
+|                                                                 | -> Optimisation mémoire
+|`Asma et Hafsa`                                                  | > Traitement d1 (Hafsa rencontre des difficultés donc Asma l'a aidé) 
+|`Asma et Badr`                                                   | > Traitement l
+
+
+
+# Planning de réalisation
+- 12/12/2023: Lancement du projet. Découverte des consignes et répartition des tâches.
+- 15/12/2023: Début de la mise en place de la page d'accueil (toute l'équipe puis asma a fini toute seul)
+- 19/12/2023: Traitement "d1" (asma et hafsa); début du traitement "d2"(Badr)
+- 26/12/2023: Suite "d1" et "d2", réalisation des graphiques.
+- 04/01/2024: Finissions du traitement "d1" et "d2".
+- 06/01/2024: Fichier aide (Hafsa). 
+- 09/01/2024: Réunion: mise en commun du travail réalisé, point sur l'avancement du projet.(tous ensemble)
+- 13/01/2024: Début traitement "l" (Badr)
+- 16/01/2024: Fin du traitement "l" (Badr et Asma)
+- 13/01/2024: Début traitement "t" (Asma)
+- [période de partiels]
+- 29/01/2024: Traitement "t" (Asma); traitement "s" (Badr)
+- 30/01/2024: Traitement "t" (Asma et Hafsa); traitement "s" (Badr)
+- 31/01/2024: Finissions du "s" et "t" (Badr et asma), makefile + readme (Hafsa)
+- 01/02/2024: Réglage des problémes "s" et "t" + verification des programme déjà effectué (tous ensemble) 
+- 02/02/2024: Dernières vérifications + rendu 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
