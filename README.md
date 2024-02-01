@@ -36,7 +36,7 @@ Sur le menu d'accueil:
 | ----------------------------------------------------            | ------------------------------------             |
 | `Asma`                                                          | -> Traitement T                                           
 |                                                                 | -> Génération des graphiques  
-|                                                                 | -> Gestion du temps d'éxécution
+|                                                                 | -> Gestion du temps d'exécution
 |                                                                 | -> Sécurisation des programmes
 |                                                                 | -> Page d'accueil/main    
 | `Badr`                                                          | -> Traitement s
@@ -59,14 +59,16 @@ Sur le menu d'accueil:
 - 26/12/2023: Suite "d1" et "d2", réalisation des graphiques.
 - 04/01/2024: Finissions du traitement "d1" et "d2".
 - 06/01/2024: Fichier aide (Hafsa). 
-- 09/01/2024:  Mise en commun du travail réalisé, point sur l'avancement du projet.(tous ensemble)
+- 09/01/2024: Réunion: mise en commun du travail réalisé, point sur l'avancement du projet.(tous ensemble)
 - 13/01/2024: Début traitement "l" (Badr)
-- 16/01/2024:
-- 29/01/2024:
-- 30/01/2024:
-- 31/01/2024: Readme (Hafsa); 
-- 01/02/2024: Finissions du "s"(Badr et asma)
-- 02/02/2024: Dernières vérifications 
+- 16/01/2024: Fin du traitement "l" (Badr et Asma)
+- 13/01/2024: Début traitement "t" (Asma)
+- [période de partiels]
+- 29/01/2024: Traitement "t" (Asma); traitement "s" (Badr)
+- 30/01/2024: Traitement "t" (Asma et Hafsa); traitement "s" (Badr)
+- 31/01/2024: Finissions du "s" et "t" (Badr et asma), makefile + readme (Hafsa)
+- 01/02/2024: Réglage des problémes "s" et "t" + verification des programme déjà effectué (tous ensemble) 
+- 02/02/2024: Dernières vérifications + rendu 
 
 
 
