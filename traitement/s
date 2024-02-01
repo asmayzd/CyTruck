@@ -7,11 +7,12 @@ chmod 777 progc/s.c
 chmod 777 temp/histogram_datas.csv
 
 s() {
-	 # Enregistrez le temps de début.
-        debut_timer_s=$(date +%s)
 	
     # Compiler t.c pour créer un exécutable
     gcc -o progc/s progc/s.c
+
+    	 # Enregistrez le temps de début.
+        debut_timer_s=$(date +%s)
 
 	cat "data/data.csv" | tail +2 | cut -d';' -f1,5 | ./progc/s | head -50  > temp/temp_s.csv
 
@@ -19,19 +20,20 @@ s() {
     ./progc/s < temp/temp_s.csv
         
 	cat temp/temp_s.csv
-	cp temp/temp_s.csv temp/histogram_datas.csv
-    # Revenir au répertoire précédent si nécessaire
-    cd .
 
-	 generate_s
-
-	 fin_timer_s=$(date +%s)
+ fin_timer_s=$(date +%s)
 
         # Calculez la durée totale en secondes.
         duree_option_s=$((fin_timer_s - debut_timer_s))
 
         # Affichez la durée.
         echo  "\nLe traitement de l'option -s a pris $duree_option_s secondes.\n"
+ 
+	cp temp/temp_s.csv temp/histogram_datas.csv
+    # Revenir au répertoire précédent si nécessaire
+    cd .
+
+	 generate_s
 
 display images/graphique_s.png
 }
