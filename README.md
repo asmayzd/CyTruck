@@ -1,7 +1,7 @@
 # Cytruck
 
 # Projet-CYtruck
-Elomri Hafsa MEF2; Yazidi Asma MEF2; Mecherfi Badr MEF2.
+Mecherfi Badr MEF2; Yazidi Asma MEF2; Elomri Hafsa MEF2.
 
 # Introduction
 Nous avons réalisé un programme permettant de gérer la logistique d'une société nationale de transport.
@@ -37,7 +37,8 @@ Sur le menu d'accueil:
 | `Asma`                                                          | -> Traitement T                                           
 |                                                                 | -> Génération des graphiques  
 |                                                                 | -> Gestion du temps d'éxécution
-|                                                                 | -> Sécurisation des programmes                  
+|                                                                 | -> Sécurisation des programmes
+|                                                                 | -> Page d'accueil/main    
 | `Badr`                                                          | -> Traitement s
 |                                                                 | -> Traitement d2 
 | `Hafsa`                                                         | -> makefile
@@ -47,24 +48,25 @@ Sur le menu d'accueil:
 |                                                                 | -> Réaliser ensemble les traitements où nous avons rencontré des difficultés
 |                                                                 | -> Optimisation mémoire
 |`Asma et Hafsa`                                                  | > Traitement d1 (Hafsa rencontre des difficultés donc Asma l'a aidé) 
-
+|`Asma et Badr`                                                   | > Traitement l
 
 
 
 # Planning de réalisation
 - 12/12/2023: Lancement du projet. Découverte des consignes et répartition des tâches.
-- 15/12/2023: 
-- 19/12/2023:
-- 26/12/2023:
-- 04/01/2024:
-- 09/01/2024:
-- 13/01/2024:
+- 15/12/2023: Début de la mise en place de la page d'accueil (toute l'équipe puis asma a fini toute seul)
+- 19/12/2023: Traitement "d1" (asma et hafsa); début du traitement "d2"(Badr)
+- 26/12/2023: Suite "d1" et "d2", réalisation des graphiques.
+- 04/01/2024: Finissions du traitement "d1" et "d2".
+- 06/01/2024: Fichier aide (Hafsa). 
+- 09/01/2024:  Mise en commun du travail réalisé, point sur l'avancement du projet.(tous ensemble)
+- 13/01/2024: Début traitement "l" (Badr)
 - 16/01/2024:
 - 29/01/2024:
 - 30/01/2024:
-- 31/01/2024:
-- 01/02/2024:
-- 02/02/2024:
+- 31/01/2024: Readme (Hafsa); 
+- 01/02/2024: Finissions du "s"(Badr et asma)
+- 02/02/2024: Dernières vérifications 
 
 
 
