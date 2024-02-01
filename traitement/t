@@ -4,21 +4,35 @@ chmod 777 traitement/t
 chmod 777 temp/temp_t.csv
 chmod 777 progc/t.c
 
+# Définition de la fonction t
 t() {
-    cut -d';' -f3,4 data/data.csv | tail -n +2 > temp/temp_t.csv
-	
+
+        # Enregistrez le temps de début.
+        debut_timer_t=$(date +%s)
+
 
     # Compiler t.c pour créer un exécutable
     gcc -o progc/t progc/t.c
 
-    # Exécuter le programme C
-    ./progc/t < temp/temp_t.csv
-	cat temp/histogram_datat.csv
+        cat "data/data.csv" | tail +2 | cut -d';' -f1,2,3,4| ./progc/t | head -10 > temp/temp_t.csv
+
+        cat temp/temp_t.csv | sort -t ';' -k1,1 -f > temp/histogram_datat.csv
 
     # Revenir au répertoire précédent si nécessaire
     cd .
 
-	generate_t
+        generate_t
+
+        fin_timer_t=$(date +%s)
+
+        # Calculez la durée totale en secondes.
+        duree_option_t=$((fin_timer_t - debut_timer_t))
+
+        # Affichez la durée.
+        echo  "\nLe traitement de l'option -t a pris $duree_option_t secondes.\n"
+
+display images/graphique_t.png
+
 }
 
 generate_t() {
@@ -40,7 +54,7 @@ generate_t() {
         set title "Graphique -t"
         set xlabel "Nom de la ville"
         set ylabel "Nombre de passage/depart"
-        set boxwidth 0.4 relative
+        set boxwidth 0.9 relative
         set style data histograms
         set style fill solid
         set xtics rotate by -45
@@ -51,8 +65,6 @@ generate_t() {
      '' using 3 title "Nombre de depart"
 
 EOF
-
-display images/graphique_t.png
 }
 
 t
