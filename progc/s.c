@@ -1,276 +1,375 @@
-#include <stdio.h>
+#include<stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-typedef struct AVLNode {
-    int step;
-    int maxi;
-    int moyenne;
-    int mini;
-    struct AVLNode *left;
-    struct AVLNode *right;
-    int height;
-    int count;  // Add count member to AVLNode
-} AVLNode;
+//Structure de l'Arbre 
+typedef struct ABR{
+  int route_ID;
+  int etape_ID;
+  float distance;
+  float min;
+  float max;
+  int n;
+  struct ABR* fG;
+  struct ABR* fD;
+}ABR;
 
-// Function to calculate the height of a node
-int height(AVLNode *node) {
-    if (node == NULL) {
-        return 0;
+
+//Structure AVL
+typedef struct AVL{
+    int route_ID;
+    float min;
+    float max;
+    float moy;
+    float diff;
+    int eq;
+    struct AVL* fG;
+    struct AVL* fD;
+}AVL;
+
+
+//Fonction qui créer les noeuds de l'arbre
+ABR* creationNoeudABR(int route_ID, int etape_ID, float distance, float min, float max){
+    ABR* pNew = malloc(sizeof(ABR));
+    
+    if (pNew == NULL) {
+        printf("Erreur au niveau du malloc");
+        exit(2);
     }
-    return node->height;
+
+    pNew->route_ID = route_ID;
+    pNew->etape_ID = etape_ID;
+    pNew->distance = distance;
+    pNew->min = min;
+    pNew->max = max;
+    pNew->n = 1 ;
+    pNew->fG = NULL;
+    pNew->fD = NULL;
+    return pNew;
 }
 
-// Function to find the maximum of two integers
-int max(int a, int b) {
+
+//Fonction insertion dans un ABR (cours)
+ABR* insertionABR(ABR* abr, int route_ID, int etape_ID, float distance){
+    if(abr == NULL){
+        abr = creationNoeudABR(route_ID, etape_ID, distance, distance, distance);
+    }
+    else if(route_ID < abr->route_ID){
+        abr->fG = insertionABR(abr->fG, route_ID, etape_ID, distance);
+    } 
+    else if(route_ID > abr->route_ID){
+        abr->fD = insertionABR(abr->fD, route_ID, etape_ID, distance);
+    }
+    else if(route_ID == abr->route_ID){
+        abr->n++;
+        abr->distance += distance;
+        if(distance > abr->max){
+            abr->max = distance;
+        }
+
+        if(distance < abr->min){
+            abr->min = distance;
+        }
+    }
+
+    return abr;
+}
+
+// Fonction pour lire le fichier csv 
+ABR* lectureCSV(const char* data, ABR* abr) {
+    FILE* fichier = fopen(data, "r");
+    if (fichier == NULL) {
+        perror("Erreur dans l'ouverture du fichier");
+        exit(EXIT_FAILURE);
+    }
+
+    int route_ID, etape_ID;
+    float distance;
+    
+    while(fscanf(fichier, "%d;%d;%f", &route_ID, &etape_ID, &distance) == 3) {
+        
+        abr = insertionABR(abr, route_ID, etape_ID, distance);//On remplis l'arbre avec les données du fichier
+    }
+    return abr;
+
+    fclose(fichier);
+}
+
+void inversion(AVL* avl, FILE* fichier2) {
+    if (avl != NULL) {
+        inversion(avl->fD, fichier2);
+        
+        fprintf(fichier2, "%d;%.3f;%.3f;%.3f;%.3f\n", avl->route_ID, avl->min, avl->max, avl->moy, avl->diff);
+        inversion(avl->fG, fichier2);
+    }
+}
+
+void infixtestABR(ABR* p){
+    printf("ABR\n");
+    if(p != NULL){
+        
+    infixtestABR(p->fD);
+    printf("[%02d], %d;%.3f;%.3f;%.3f;%d", p->route_ID, p->etape_ID, p->min, p->max, p->distance, p->n);
+    
+    infixtestABR(p->fG);
+    }
+}
+
+void infixtestAVL(AVL* p){
+    printf("AVL\n");
+    if(p != NULL){
+        
+    infixtestAVL(p->fD);
+    printf("[%02d]", p->route_ID);
+    
+    infixtestAVL(p->fG);
+    }
+}
+
+//Fonction qui créer les noeuds de l'AVL (cours)
+AVL* creationNoeudAVL(ABR* abr){
+    
+    AVL* new = malloc(sizeof(AVL));
+    if (new == NULL) {
+        printf("Erreur au niveau du malloc");
+        exit(3);
+    }
+
+    new->route_ID = abr->route_ID;
+    new->min = abr->min;
+    new->max = abr->max;
+    new->moy = (abr->distance / (double)abr->n);
+    new->diff = abr->max - abr->min;
+    new->eq = 0;
+    new->fG = NULL;
+    new->fD = NULL;
+
+    return new;
+}
+
+
+//Fonction qui retourne le minimum entre trois entiers 
+int min3(int a, int b, int c){
+return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+}
+
+//Fonction qui retourne le max entre deux entiers 
+int max2(int a, int b){
     return (a > b) ? a : b;
 }
 
-void freeAVLTree(AVLNode *node) {
-    if (node != NULL) {
-        freeAVLTree(node->left);
-        freeAVLTree(node->right);
-        free(node);
+//Fonction rotation gauche (cours)
+AVL* RotationG(AVL* avl){
+    if(avl == NULL){
+        printf("L'arbre est null\n");
+        exit(4);
     }
+    AVL* pivot;
+    int eq_a, eq_p;
+
+    pivot = avl->fD;
+    avl->fD = pivot->fG;
+    pivot->fG = avl;
+    
+    eq_a = avl->eq;
+    eq_p = pivot->eq;
+    avl->eq = eq_a - max2(eq_p, 0) - 1;
+    pivot->eq = min3(eq_a - 2, eq_a + eq_p - 2, eq_p-1);
+
+    avl = pivot;
+
+    return avl;
 }
 
+//Fonction qui retourne le minimum entre deux entiers
+int min2(int a, int b) {
+    return (a < b) ? a : b;
+}
 
-// Function to create a new AVL node
-AVLNode* newNode(int step, int maxi, int moyenne, int mini) {
-    AVLNode* node = (AVLNode*)malloc(sizeof(AVLNode));
-    if (!node) {
-        perror("Memory allocation error");
-        exit(EXIT_FAILURE);
+//Fonction qui retourne le maximum entre trois entiers
+int max3(int a, int b, int c) {
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+}
+
+//Fonction rotation droite (cours)
+AVL* RotationD(AVL* avl){
+    if(avl == NULL){
+        printf("L'arbre est null\n");
+        exit(5);
     }
-    node->step = step;
-    node->maxi = maxi;
-    node->moyenne = moyenne;
-    node->mini = mini;
-    node->left = NULL;
-    node->right = NULL;
-    node->height = 1;  // New node is initially at height 1
-    return node;
+    AVL* pivot;
+    int eq_a, eq_p;
+
+    pivot = avl->fG;
+    avl->fG = pivot->fD;
+    pivot->fD = avl;
+    
+    eq_a = avl->eq;
+    eq_p = pivot->eq;
+    avl->eq = eq_a - min2(eq_p, 0) + 1;
+    pivot->eq = max3(eq_a + 2, eq_a + eq_p + 2, eq_p + 1);
+
+    avl = pivot;
+
+    return avl;
 }
 
-// Function to right rotate a subtree rooted with y
-AVLNode* rightRotate(AVLNode* y) {
-    AVLNode* x = y->left;
-    AVLNode* T2 = x->right;
-
-    // Perform rotation
-    x->right = y;
-    y->left = T2;
-
-    // Update heights
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
-
-    // Return new root
-    return x;
-}
-
-// Function to left rotate a subtree rooted with x
-AVLNode* leftRotate(AVLNode* x) {
-    AVLNode* y = x->right;
-    AVLNode* T2 = y->left;
-
-    // Perform rotation
-    y->left = x;
-    x->right = T2;
-
-    // Update heights
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
-
-    // Return new root
-    return y;
-}
-
-// Get the balance factor of a node
-int getBalance(AVLNode* node) {
-    if (node == NULL) {
-        return 0;
+//Focnction double rotation gauche (cours)
+AVL* doubleRotationG(AVL* avl){
+    if(avl == NULL){
+        printf("L'arbre est null\n");
+        exit(6);
     }
-    return height(node->left) - height(node->right);
+    avl->fD = RotationD(avl->fD);
+    return RotationG(avl);
 }
 
-AVLNode* insertOrUpdate(AVLNode* node, int step, int maxi, int moyenne, int mini) {
-    // Perform standard BST insertion
-    if (node == NULL) {
-        AVLNode* new_node = newNode(step, maxi, moyenne, mini);
-        new_node->count = 1;
-        return new_node;
+//Fonction double rotation droite (cours)
+AVL* doubleRotationD(AVL* avl){
+        if(avl == NULL){
+        printf("L'arbre est null\n");
+        exit(7);
     }
+    avl->fG = RotationG(avl->fG);
+    return RotationD(avl);
+}
 
-    if (step < node->step) {
-        node->left = insertOrUpdate(node->left, step, maxi, moyenne, mini);
-    } else if (step > node->step) {
-        node->right = insertOrUpdate(node->right, step, maxi, moyenne, mini);
-    } else {
-        // Step already exists, update values
-        if (maxi > node->maxi) {
-            node->maxi = maxi;
+//Fonction pour equilibre un AVL (cours)
+AVL* equilibrageAVL(AVL* avl){
+        if(avl == NULL){
+        printf("L'arbre est null\n");
+        exit(8);
+    }
+    if(avl->eq > 1){
+        if(avl->fD->eq >= 0){
+            return RotationG(avl);
         }
-
-        if (mini < node->mini) {
-            node->mini = mini;
-        }
-
-        // Update moyenne based on the new value and the number of occurrences
-        node->moyenne = (node->moyenne * node->count + moyenne) / (node->count + 1);
-        node->count++;
-
-        return node;
-    }
-
-    // Update height of current node
-    node->height = 1 + max(height(node->left), height(node->right));
-
-    // Get the balance factor to check if this node became unbalanced
-    int balance = getBalance(node);
-
-    // Left Left Case
-    if (balance > 1 && step < node->left->step) {
-        return rightRotate(node);
-    }
-
-    // Right Right Case
-    if (balance < -1 && step > node->right->step) {
-        return leftRotate(node);
-    }
-
-    // Left Right Case
-    if (balance > 1 && step > node->left->step) {
-        node->left = leftRotate(node->left);
-        return rightRotate(node);
-    }
-
-    // Right Left Case
-    if (balance < -1 && step < node->right->step) {
-        node->right = rightRotate(node->right);
-        return leftRotate(node);
-    }
-
-    // Return the balanced node
-    return node;
-}
-
-// Function to write AVL tree nodes to an array in reverse order
-int writeInReverseOrderToArray(AVLNode *node, AVLNode **array, int count){
-    if (node && count < 50) {
-        count = writeInReverseOrderToArray(node->right, array, count);
-
-        // Add the current node to the array
-        array[count] = node;
-        count++;
-
-        return writeInReverseOrderToArray(node->left, array, count);
-    }
-
-    return count;
-}
-
-
-
-// Function to write the AVL tree in reverse order based on "distance_maxi - distance_mini"
-int writeInReverseOrder(AVLNode *node, FILE *file, int count) {
-    if (node && count < 50) {
-        count = writeInReverseOrder(node->right, file, count);
-
-        fprintf(file, "%d;%d;%d;%d\n", node->step, node->mini, node->moyenne, node->maxi);
-        count++;
-
-        return writeInReverseOrder(node->left, file, count);
-    }
-
-    return count;
-}
-
-/// Function to compare nodes based on "distance_maxi - distance_mini" for qsort
-int compareNodes(const void *a, const void *b) {
-    const AVLNode *nodeA = (const AVLNode *)a;
-    const AVLNode *nodeB = (const AVLNode *)b;
-
-    // Sort in descending order based on "distance_maxi - distance_mini"
-    int diffA = nodeA->maxi - nodeA->mini;
-    int diffB = nodeB->maxi - nodeB->mini;
-
-    return diffB - diffA;
-}
-// Function to write the results to the output file
-void writeOutputFile(const char *filename, AVLNode *root) {
-    FILE *file = fopen(filename, "w");
-    if (!file) {
-        perror("Error opening output file");
-        exit(EXIT_FAILURE);
-    }
-
-    fprintf(file, "Step;Min;Avg;Max\n");  // Header
-
-    // Create an array of AVLNode
-    AVLNode *nodesArray[50];
-    int nodeCount = writeInReverseOrderToArray(root, nodesArray, 0);
-
-    // Sort the array of nodes based on "distance_maxi - distance_mini"
-    qsort(nodesArray, nodeCount, sizeof(AVLNode), compareNodes);
-
-    // Write the top 50 nodes to the file
-    for (int i = 0; i < 50 && i < nodeCount; i++) {
-        if (fprintf(file, "%d;%d;%d;%d\n", nodesArray[i]->step, nodesArray[i]->mini, nodesArray[i]->moyenne, nodesArray[i]->maxi) < 0) {
-            perror("Error writing to output file");
-            fclose(file);
-            freeAVLTree(root);
-            exit(EXIT_FAILURE);
+        else{
+            return doubleRotationG(avl);
         }
     }
-
-    fclose(file);
-}
-
-// Function to read data from the input file and insert/update nodes in the AVL tree
-AVLNode* processInputFile(const char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (!file) {
-        perror("Error opening input file");
-        exit(EXIT_FAILURE);
+    else if(avl->eq < -1){
+        if(avl->fG->eq <= 0){
+            return RotationD(avl);
+        }
+        else{
+            return doubleRotationD(avl);
+        }
     }
-
-    AVLNode *root = NULL;
-    int step, maxi, moyenne, mini;
-
-    while (fscanf(file, "%d;%d", &step, &mini) == 2) {
-        // Assuming initial values for maxi and moyenne are the same as mini
-        maxi = mini;
-        moyenne = mini;
-
-        // Insert or update node in the AVL tree
-        root = insertOrUpdate(root, step, maxi, moyenne, mini);
-    }
-
-    if (ferror(file)) {
-        perror("Error reading from input file");
-        fclose(file);
-        freeAVLTree(root);
-        exit(EXIT_FAILURE);
-    }
-
-    fclose(file);
-    return root;
+    return avl;
 }
 
 
-int main() {
-    const char *inputFile = "temp/temp_s.csv";
-    const char *outputFile = "temp/histogram_datas.csv";
+//Fonction insertion dans un AVL avec l'equilibrage (cours)
+AVL* insertionAVL(AVL* avl, int* h, ABR* abr){
+    AVL* new = creationNoeudAVL(abr);
 
-    // Process input file and build AVL tree
-    AVLNode *root = processInputFile(inputFile);
+    if(avl ==  NULL){
+        *h = 1;
+        return new;
+    }
+    else if(new->diff < avl->diff){
+        avl->fG = insertionAVL(avl->fG, h, abr);
+        *h = -(*h);
+    }
+    else if(new->diff > avl->diff){
+        avl->fD = insertionAVL(avl->fD, h, abr);
+    }
+    else{
+        *h = 0;
+        return avl;
+    }
 
-    // Write results to output file
-    writeOutputFile(outputFile, root);
+    if(*h != 0){
+        avl->eq = avl->eq + *h;
+        avl = equilibrageAVL(avl);
+        if(avl->eq == 0){
+            *h = 0;
+        }
+        else{
+            *h = 1;
+        }
 
-    // Free memory if necessary
-    freeAVLTree(root);
+    }
+    return avl;
+}
 
-    return 0;
+
+//Parcours de l'ABR et insertion dans l'AVL
+AVL* parcoursAVL(ABR* abr, AVL* avl, int h){
+    if(abr != NULL){
+        //Insère la valeur actuelle de l'ABR dans l'AVL
+        avl = insertionAVL(avl, &h, abr);
+        
+        //Continue le parcours en ordre dans l'ABR
+        avl = parcoursAVL(abr->fG, avl, h);
+        avl = parcoursAVL(abr->fD, avl, h);
+    } 
+    return avl;
+}
+
+
+//Fonction pour libérer ABR 
+void freeABR(ABR* abr) {
+    // Si le nœud est NULL, il n'y a rien à libérer, donc return
+    if (abr == NULL) {
+        return;
+    }
+
+    // Récursivement libérer le sous-arbre gauche et le sous-arbre droit
+    freeABR(abr->fG);
+    freeABR(abr->fD);
+
+    // Libérer le nœud actuel
+    free(abr);
+}
+
+
+//Fonction pour libérer AVL 
+void freeAVL(AVL* avl){
+    //si NULL alors return
+    if (avl == NULL) {
+        return;
+    }
+
+    //Libére le sous-arbre gauche et le sous-arbre droit
+    freeAVL(avl->fG);
+    freeAVL(avl->fD);
+
+    //Libére le noeud sur lequel on se trouve 
+    free(avl);
+}
+
+
+int main(int argc, char *argv[]){
+     //Verrification des arguments
+    if (argc != 2) {
+        printf("Il y a plus d'un argument ");
+        exit (1);
+    }
+
+    ABR* abr = NULL;
+    abr = lectureCSV(argv[1], abr);
+
+    AVL* avl = NULL;
+ 
+    int h = 0;
+    avl = parcoursAVL(abr, avl, h);
+    
+
+    //Ouvrir un fichier en écriture
+    FILE *fichiertemp = fopen("temp/temp_s.csv", "w");
+    if (fichiertemp == NULL) {
+        perror("Erreur lors de l'ouverture du fichier");
+        exit(EXIT_FAILURE);
+    }
+
+    inversion(avl, fichiertemp);
+    printf("\n");
+
+    fclose(fichiertemp);
+
+    freeABR(abr);
+    freeAVL(avl);
+
+    return 0 ;
 }
