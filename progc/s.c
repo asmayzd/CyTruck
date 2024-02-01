@@ -1,7 +1,6 @@
 #define OPTION_S
 #define OPTION_S
 
-//PréIng2 MI2 Semestre 1, Projet CY-Trucks : Traitement -s
 #include <stdio.h>
 #include <stdlib.h>
 
