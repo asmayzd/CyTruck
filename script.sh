@@ -95,7 +95,7 @@ case $choix in
     3) chemin_script="traitement/l" ;;
     4) chemin_script="traitement/t" ;;
     5) chemin_script="traitement/s" ;;
-    6) chemin_script="help.txt" ;;
+    6) cat "help.txt" ;;
 esac
 
 if [ -f "$chemin_script" ]; then
