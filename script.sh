@@ -9,7 +9,7 @@ check_dossiertemp() {
     fi
 }
 
-creer_dossierimages() {
+check_dossierimages() {
     if [ ! -d "images" ]; then
         mkdir images
     fi
@@ -30,14 +30,47 @@ fi
 
 if ! command -v gnuplot >/dev/null 2>&1; then
     echo "Gnuplot could not be found"
+	sudo apt-get update
+	sudo apt-get install gnuplot
 fi
 
+if ! command -v gnuplot >/dev/null 2>&1; then
+    echo "Gnuplot could not be found"
+        sudo apt-get update
+        sudo apt-get install gnuplot
+fi
+
+if ! command -v convert >/dev/null 2>&1; then
+    echo "ImageMagick could not be found"
+    # Mise à jour des dépôts
+    sudo apt-get update
+    # Installation de ImageMagick
+    sudo apt-get install imagemagick
+fi
+
+# Fonction pour vérifier l'installation du gnuplot
+check_gnuplot() {
+    if ! command -v gnuplot >/dev/null 2>&1; then
+        echo "Gnuplot installation failed"
+    fi
+}
+
+
+# Fonction pour vérifier l installation d'ImageMagick
+check_imagemagick() {
+    if ! command -v convert >/dev/null 2>&1; then
+        echo "ImageMagick installation failed"
+    fi
+}
+
+
 check_dossiertemp
-creer_dossierimage
+check_dossierimages
 clean_temp
 clean_images
 
-
+check_gnuplot
+check_imagemagick
 choix=""
 while ! [[ "$choix" =~ ^[1-6]$ ]]; do
     echo "====== Bienvenue ! Choisissez une fonction : ====="
