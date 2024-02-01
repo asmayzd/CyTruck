@@ -15,14 +15,6 @@ sort -t";" -k2nr | head -10 | sort -t";" -k1n > temp/temp_l.csv
 
  cat temp/temp_l.csv
 
-        
-    # Créer un fichier de données pour l'histogramme
-	awk '{gsub(/^ +/, "", $0); print $2, $1}' temp/temp_l.csv > temp/histogram_datal.csv
-	sed -i 's/^[ \t]*//' temp/histogram_datal.csv
-	
-    # Appel de la fonction pour tracer le graphique
-    generate_l
-
 	fin_timer_l=$(date +%s)
 
         # Calculez la durée totale en secondes.
@@ -30,6 +22,13 @@ sort -t";" -k2nr | head -10 | sort -t";" -k1n > temp/temp_l.csv
 
         # Affichez la durée.
         echo  "\nLe traitement de l'option -l a pris $duree_option_l secondes.\n"
+        
+    # Créer un fichier de données pour l'histogramme
+	awk '{gsub(/^ +/, "", $0); print $2, $1}' temp/temp_l.csv > temp/histogram_datal.csv
+	sed -i 's/^[ \t]*//' temp/histogram_datal.csv
+	
+    # Appel de la fonction pour tracer le graphique
+    generate_l
 
 	display images/graphique_l.png
 }
