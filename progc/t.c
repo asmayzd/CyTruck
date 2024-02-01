@@ -5,16 +5,16 @@
 #include <unistd.h>
 #define SIZE 100
 
-typedef struct noeud_RouteID{    //BUT : faire un AVL de tous trajets (Route_ID) dans lesquels la ville est présente
+typedef struct _node_RouteID{    //BUT : faire un AVL de tous trajets (Route_ID) dans lesquels la ville est présente
     int Route_ID;
     int equilibre;
-    struct noeud_RouteID* fg;
-    struct noeud_RouteID* fd;
-} Noeud_RouteID;
+    struct _node_RouteID* pL;
+    struct _node_RouteID* pR;
+} Node_RouteID;
 
-typedef struct AVL {
+typedef struct _tree {
     char ville[SIZE];
-    Noeud_RouteID* AVL_RouteID;
+    Node_RouteID* AVL_RouteID;
     /*  AVL_RouteID : 
         On liste l'ensemble des trajets dans lesquelles la ville apparait.
         ATTENTION : si la ville apparait 2 fois dans le même trajet, il y a doublon, on fait alors :
@@ -26,62 +26,62 @@ typedef struct AVL {
     int nb_apparition_par_trajet;
     int doublons_ville_par_trajet;
     // nb_apparition_par_trajet = nb_apparition_ville_depart_trajet + nb_apparition_ville_arrivee_etape - les doublons de ville par trajet
-    struct AVL* fg;
-    struct AVL* fd;
+    struct _tree* pL;
+    struct _tree* pR;
     int equilibre;                                  //equilibre = hauteur sous-arbre droit - hauteur sous-arbre gauche
-} AVL;
+} Tree;
 
-typedef struct noeud{
+typedef struct _node{
     char ville[SIZE];
     int nb_apparition_par_trajet;
     int nb_apparition_ville_depart_trajet;
-    struct noeud* suivant;    //pointeur vers prochain chainon
-} NOEUD;
+    struct _node* pNext;    //pointeur vers prochain chainon
+} NODE;
 
-NOEUD* creationNoeud (char mot[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
-    NOEUD* pNouveau = malloc(sizeof(NOEUD));
-    if (pNouveau == NULL){
+NODE * createNode (char word[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
+    NODE* pNew = malloc(sizeof(NODE));
+    if (pNew == NULL){
         exit(2);
     }
-    strcpy(pNouveau->ville , mot);    //copie du nom de ville : strcpy(destination de la copie, source);
-    pNouveau->nb_apparition_par_trajet = NB_apparition_par_trajet;
-    pNouveau->nb_apparition_ville_depart_trajet = NB_apparition_ville_depart_trajet;
-    pNouveau->suivant = NULL;
-    return pNouveau;
+    strcpy(pNew->ville , word);    //copie du nom de ville : strcpy(destination de la copie, source);
+    pNew->nb_apparition_par_trajet = NB_apparition_par_trajet;
+    pNew->nb_apparition_ville_depart_trajet = NB_apparition_ville_depart_trajet;
+    pNew->pNext = NULL;
+    return pNew;
 }
 
-NOEUD* insertDebut (NOEUD * pTete, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
-    NOEUD * pNouveau = creationNoeud(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
-    if (pNouveau == NULL){
+NODE* addStart (NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
+    NODE * pNew = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
+    if (pNew == NULL){
         exit(2601); //pour strcmp()
     }
-    if (pTete == NULL){
-        pTete = pNouveau;
-        return pTete;
+    if (pHead == NULL){
+        pHead = pNew;
+        return pHead;
     }
     else{
-        pNouveau->suivant = pTete;
-        pTete = pNouveau;
-        return pTete;
+        pNew->pNext = pHead;
+        pHead = pNew;
+        return pHead;
     }
 }
 
-NOEUD * insertFin(NOEUD * pTete, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
-    NOEUD* pNouveau = creationNoeud(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
-    NOEUD* pListe = pTete;
-    if (pNouveau == NULL){
+NODE * addEnd(NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){
+    NODE* pNew = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
+    NODE* pList = pHead;
+    if (pNew == NULL){
         exit(2602);
     }
-    if (pTete == NULL){
-        pTete = pNouveau;
+    if (pHead == NULL){
+        pHead = pNew;
     }
     else{
-        while(pListe->suivant!=NULL){
-            pListe = pListe->suivant;
+        while(pList->pNext!=NULL){
+            pList = pList->pNext;
         }
-        pListe->suivant = pNouveau;
+        pList->pNext = pNew;
     }
-    return pTete;
+    return pHead;
 }
 
 void addBetweenNodes(NODE* pList, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){        //ajoute le noeud entre pList et pList->pNext
