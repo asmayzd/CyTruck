@@ -103,6 +103,7 @@ while true; do
     fi
 done
 
+<<<<<<< HEAD
 # Traiter chaque choix
 for c in "${choix_array[@]}"; do
     case $c in
@@ -132,6 +133,8 @@ for c in "${choix_array[@]}"; do
             chemin_script="traitement/s" ;;
         6) cat "help.txt" ;;
     esac
+=======
+>>>>>>> a25a1c141420cc4662e1e352b58968b076d8250e
 
     # Exécuter le script correspondant au choix
     ./$chemin_script

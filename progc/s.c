@@ -1,27 +1,7 @@
 #define OPTION_S
 #define OPTION_S
 
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct _DistanceNode {
-    float distance;
-    struct _DistanceNode* pNext;
-} Distance;    //stocker plusieurs distances ayant le même numéro de routes
-
-typedef struct _AVL{
-    int routeid;
-    Distance* distance;
-    struct _AVL* pL;
-    struct _AVL* pR;
-    int taille;
-    float minDistance;
-    float maxDistance;
-    float moyenne;
-    float moyennedistance;
-    int nombredist;
-    float sommedist;
-} AVL;
+#include "s.h"
 
 Distance* Newdistance(float dist) {
     Distance* p = malloc(sizeof(Distance));
