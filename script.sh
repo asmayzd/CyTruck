@@ -29,13 +29,7 @@ if [ ! -f "data/data.csv" ]; then
 fi
 
 if ! command -v gnuplot >/dev/null 2>&1; then
-    echo "Gnuplot could not be found"
-	sudo apt-get update
-	sudo apt-get install gnuplot
-fi
-
-if ! command -v gnuplot >/dev/null 2>&1; then
-    echo "Gnuplot could not be found"
+    echo "Erreur : Gnuplot n'est pas installé"
       # Mise à jour des dépôts
         sudo apt-get update
 	# Installation de Gnuplot
@@ -43,7 +37,7 @@ if ! command -v gnuplot >/dev/null 2>&1; then
 fi
 
 if ! command -v convert >/dev/null 2>&1; then
-    echo "ImageMagick could not be found"
+    echo "Erreur : ImageMagick n'est pas installé"
     # Mise à jour des dépôts
     sudo apt-get update
     # Installation de ImageMagick
@@ -53,7 +47,7 @@ fi
 # Fonction pour vérifier l'installation du gnuplot
 check_gnuplot() {
     if ! command -v gnuplot >/dev/null 2>&1; then
-        echo "Gnuplot installation failed"
+        echo "Erreur : l'installation de Gnuplot a échoué"
     fi
 }
 
@@ -61,7 +55,7 @@ check_gnuplot() {
 # Fonction pour vérifier l installation d'ImageMagick
 check_imagemagick() {
     if ! command -v convert >/dev/null 2>&1; then
-        echo "ImageMagick installation failed"
+        echo "Erreur : l'installation de ImageMagick a échoué"
     fi
 }
 
@@ -76,7 +70,7 @@ check_imagemagick
 
 choix=""
 while true; do
-    echo "====== Bienvenue ! Choisissez une fonction : ====="
+    echo "====== Bienvenue ! Choisissez une fonction : ======"
     echo "1. Fonction -d1"
     echo "2. Fonction -d2"
     echo "3. Fonction -l"
