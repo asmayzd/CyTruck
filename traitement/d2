@@ -72,5 +72,5 @@ fi
 GNUPLOT_SCRIPT
 
 }
-# Appel de la fonction d1
+# Appel de la fonction d2
 d2
