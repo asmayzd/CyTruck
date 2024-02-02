@@ -16,7 +16,8 @@ Vous accéderez ensuite à la page d'accueil:
 
 
 Une fois sur la page d'accueil, en entrant '6', vous pouvez accéder au fichier d'aide qui détaille toutes les options de notre programme et en entrant '7', vous pouvez sortir du programme.
-![image(2)](https://github.com/asmayzd/CyTruck/assets/131535443/6c9fcd27-f5ef-4fbe-beba-c36da62de77f)
+![image](https://github.com/asmayzd/CyTruck/assets/153599506/e4a08911-53d4-44fe-9547-4a18cdf41410)
+
 
 
 
