@@ -7,7 +7,7 @@ Mecherfi Badr MEF2; Yazidi Asma MEF2; Elomri Hafsa MEF2.
 Nous avons réalisé un programme permettant de gérer la logistique d'une société nationale de transport.
 
 # Instruction pour compiler: 
-Taper dans le terminal: ./script.sh
+Se placer à la racine du projet et Taper dans le terminal: ./script.sh
 ![image(9)](https://github.com/asmayzd/CyTruck/assets/131535443/0c966d08-6018-433d-909d-a9f5d02c3a64)
 
 
@@ -15,7 +15,7 @@ Vous accéderez ensuite à la page d'accueil:
 ![image(8)](https://github.com/asmayzd/CyTruck/assets/131535443/2515e914-fddd-44eb-b44b-074b3916337a)
 
 
-Une fois sur la page d'accueil, en tapant '6', vous pouvez accéder au fichier d'aide qui détaille toutes les options de notre programme.
+Une fois sur la page d'accueil, en entrant '6', vous pouvez accéder au fichier d'aide qui détaille toutes les options de notre programme et en entrant '7', vous pouvez sortir du programme.
 ![image(2)](https://github.com/asmayzd/CyTruck/assets/131535443/6c9fcd27-f5ef-4fbe-beba-c36da62de77f)
 
 
