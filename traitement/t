@@ -1,7 +1,6 @@
 #!/bin/bash
 
 chmod 777 traitement/t
-chmod 777 temp/temp_t.csv
 chmod 777 progc/t.c
 
 # Définition de la fonction t
