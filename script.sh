@@ -130,5 +130,5 @@ for c in "${choix_array[@]}"; do
 
 
     # Exécuter le script correspondant au choix
-    ./$chemin_script
+    $chemin_script
 done
