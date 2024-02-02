@@ -73,8 +73,9 @@ clean_images
 
 check_gnuplot
 check_imagemagick
+
 choix=""
-while ! [[ "$choix" =~ ^[1-6]$ ]]; do
+while true; do
     echo "====== Bienvenue ! Choisissez une fonction : ====="
     echo "1. Fonction -d1"
     echo "2. Fonction -d2"
@@ -82,27 +83,56 @@ while ! [[ "$choix" =~ ^[1-6]$ ]]; do
     echo "4. Fonction -t"
     echo "5. Fonction -s"
     echo "6. Aide"
-	read -p "Entrez le numéro de la fonction que vous voulez exécuter : " choix
+    read -p "Entrez le numéro de la fonction que vous voulez exécuter (séparez les choix par des espaces) : " choix
 
-if ! [[ "$choix" =~ ^[1-6]$ ]]; then
-        echo "Choix invalide. Veuillez entrer un numéro de fonction entre 1 et 6."
+    # Diviser les choix en un tableau
+    choix_array=($choix)
+
+    # Vérifier chaque choix
+    choix_valid=true
+    for c in "${choix_array[@]}"; do
+        if ! [[ "$c" =~ ^[1-6]$ ]]; then
+            choix_valid=false
+            echo "Choix '$c' invalide. Veuillez entrer des numéros de fonction entre 1 et 6."
+            break
+        fi
+    done
+
+    if [ "$choix_valid" = true ]; then
+        break
     fi
 done
 
-case $choix in
-    1) chemin_script="traitement/d1" ;;
-    2) chemin_script="traitement/d2" ;;
-    3) chemin_script="traitement/l" ;;
-    4) chemin_script="traitement/t" ;;
-    5) chemin_script="traitement/s" ;;
-    6) cat "help.txt" ;;
-esac
+# Traiter chaque choix
+for c in "${choix_array[@]}"; do
+    case $c in
+        1) chemin_script="traitement/d1" ;;
+        2) chemin_script="traitement/d2" ;;
+        3) chemin_script="traitement/l" ;;
+        4)
+            if [ ! -f "progc/t" ]; then
+                gcc -o progc/t progc/t.c
+                # Vérifier si la compilation s'est bien déroulée
+                if [ $? -ne 0 ]; then
+                    echo "Erreur de compilation"
+                    exit 1
+                fi
+            fi
+            chemin_script="traitement/t"
+            ;;
+        5)
+            if [ ! -f "progc/s" ]; then
+                gcc -o progc/s progc/s.c
+                # Vérifier si la compilation s'est bien déroulée
+                if [ $? -ne 0 ]; then
+                    echo "Erreur de compilation"
+                    exit 2
+                fi
+            fi
+            chemin_script="traitement/s" ;;
+        6) cat "help.txt" ;;
+    esac
 
-if [ -f "$chemin_script" ]; then
-    echo "Exécution du script $chemin_script..."
-    # Message d'exécution du script correspondant
-    sh "$chemin_script"  # Exécute le script 
-else
-    echo "Le script correspondant au choix n'existe pas."
-    exit 1
-fi
+    # Exécuter le script correspondant au choix
+    ./$chemin_script
+done
