@@ -7,6 +7,8 @@ Mecherfi Badr MEF2; Yazidi Asma MEF2; Elomri Hafsa MEF2.
 Nous avons réalisé un programme permettant de gérer la logistique d'une société nationale de transport.
 
 # Instruction pour compiler: 
+
+Veillez à telecharger ImageMacker, Gnuplot et display.
 Se placer à la racine du projet et Taper dans le terminal: ./script.sh
 ![image(9)](https://github.com/asmayzd/CyTruck/assets/131535443/0c966d08-6018-433d-909d-a9f5d02c3a64)
 
