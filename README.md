@@ -37,7 +37,7 @@ Une fois sur la page d'accueil, en entrant '6', vous pouvez accéder au fichier 
 - Nous avons eu du mal à gérer le temps d'exécution, par exemple le temps d'exécution de l'option "l" dépasse une fois sur deux le temps autorisé.
 - Les options "t" et "s" ont été les plus durs à réaliser.
 - Le gnuplot a été difficile réaliser.
-- Parfois, un message d'erreur apparaît lorsqu'on lance les options "t" et "s" alors qu'il n'y a pas d'erreur. 
+- Parfois, un message d'erreur apparaît lorsqu'on lance les options "t" et "s" alors qu'il n'y a pas d'erreur. (cette erreur a été corrigée)
 
 # Quelques résultats :
 
