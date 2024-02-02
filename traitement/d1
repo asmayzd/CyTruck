@@ -60,7 +60,7 @@ fi
         set ylabel 'Noms des conducteurs'
         set xlabel 'Nombre de trajets'
 		
-
+	# Tracer les données à partir du fichier
         plot 'temp/histogram_data.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
 GNUPLOT_SCRIPT
 
