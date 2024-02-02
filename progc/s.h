@@ -4,16 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _DistanceNode {
+// Structure représentant un nœud de distance
+typedef struct Distance {
     float distance;
-    struct _DistanceNode* pNext;
-} Distance;    //stocker plusieurs distances ayant le même numéro de routes
+    struct Distance* pNext;
+} Distance;
 
-typedef struct _AVL{
+// Structure représentant un nœud de l'arbre AVL
+typedef struct AVL {
     int routeid;
     Distance* distance;
-    struct _AVL* pL;
-    struct _AVL* pR;
+    struct AVL* pL;
+    struct AVL* pR;
     int taille;
     float minDistance;
     float maxDistance;
@@ -22,6 +24,7 @@ typedef struct _AVL{
     int nombredist;
     float sommedist;
 } AVL;
+
 
 Distance* Newdistance(float dist);
 AVL* createAVL(int routeNbr, float dist);
