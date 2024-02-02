@@ -53,6 +53,9 @@ Le temps d'exécution pour l'option "t" a été de 15 secondes:
 Le temps d'exécution pour l'option "s" a été de 13 secondes:
 ![image(7)](https://github.com/asmayzd/CyTruck/assets/131535443/5c9c92ee-aab0-44b0-bd81-a42f5c3f527d)
 
+
+
+
 # Document pdf contenant le planning de réalisation et la répartition des tâches au sein de l'équipe :
 
 
