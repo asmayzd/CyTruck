@@ -46,7 +46,7 @@ generate_s() {
     fi
 
     # Partie graphique (gnuplot)
-    gnuplot << EOF
+    gnuplot <<-GNUPLOT_SCRIPT
 
     # Ouverture du script Gnuplot
         set terminal png size 900,600 #définit la taille de l'image
@@ -59,10 +59,10 @@ set ylabel "DISTANCE (Km)" #donne un titre à l'axe des ordonnées
 
 set xtics rotate by -60
 
-Shadecolor = "light-green"
+Shadecolor = "light-blue"
 plot 'temp/histogram_datas.csv' using 0:2:4:xticlabels(1) with filledcurve fc rgb Shadecolor title "Distance Min/Max", \
 '' using 0:3:xticlabels(1) smooth mcspline lw 2 title "Distance average"
-EOF
+GNUPLOT_SCRIPT
 }
 
 s

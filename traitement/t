@@ -16,7 +16,7 @@ t() {
 
         cat "data/data.csv" | tail +2 | cut -d';' -f1,2,3,4| ./progc/t | head -10 > temp/temp_t.csv
 
-        cat temp/temp_t.csv | sort -t ';' -k1,1 -f > temp/histogram_datat.csv
+	cat "temp/temp_t.csv" | sort -t ';' -k1,1 -f > temp/histogram_datat.csv
 
 fin_timer_t=$(date +%s)
 
@@ -43,7 +43,7 @@ generate_t() {
     fi
 
     # Partie graphique (gnuplot)
-    gnuplot << EOF
+    gnuplot <<-GNUPLOT_SCRIPT
 
     # Ouverture du script Gnuplot
         set terminal png # Définit le type de fichier de sortie comme une image PNG
@@ -64,7 +64,7 @@ generate_t() {
         plot 'temp/histogram_datat.csv' using 2:xtic(1) title "Nombre de passage", \
      '' using 3 title "Nombre de depart"
 
-EOF
+GNUPLOT_SCRIPT
 }
 
 t
