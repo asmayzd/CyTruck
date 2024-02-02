@@ -27,7 +27,7 @@ s() {
         duree_option_s=$((fin_timer_s - debut_timer_s))
 
         # Affichez la durée.
-        echo  "\nLe traitement de l'option -s a pris $duree_option_s secondes.\n"
+        echo  "Le traitement de l'option -s a pris $duree_option_s secondes."
  
 	cp temp/temp_s.csv temp/histogram_datas.csv
     # Revenir au répertoire précédent si nécessaire
