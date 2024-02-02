@@ -6,15 +6,12 @@ Mecherfi Badr MEF2; Yazidi Asma MEF2; Elomri Hafsa MEF2.
 # Introduction
 Nous avons réalisé un programme permettant de gérer la logistique d'une société nationale de transport.
 
-# Instruction
-Sur le menu d'accueil: 
-- En choisissant l'option "h" vous aurez accès au fichier d'aide dans lequel sont enuméré et expliqué toutes les options possibles de notre projet.
-- En choisissant l'option "d1" les 10 conducteurs avec le nombre de trajets les plus élevés seront affichés.
-- En choisissant l'option "d2" les 10 conducteurs avec la plus grande distance parcourue seront affichés.
-- En choisissant l'option "l" les 10 trajets les plus longs seront affichés.
-- En choisissant l'option "t" les 10 villes les plus freéquentées seront affichées.
-- En choisissant l'option "s" vous trouverez les statistiques sur les étapes.
+# Instruction pour compiler: 
+Taper dans le terminal: ./script.sh
 
+
+
+Une fois sur le menu d'accueil, vous pouvez en tapant "6" accéder au fichier aide dans lequel toutes les options de notre programme sont détaillés
 
 # Objectifs réussis
 - Nous avons réussi à travailler en équipe malgrè les difficultés de certains.
@@ -24,11 +21,11 @@ Sur le menu d'accueil:
 - Malgré les difficultés rencontrées nous avons réussi à réaliser les graphiques. Ils affichent sous la bonne forme les bonnes informations.
 
 
-
 # Problèmes rencontrés
 - Nous avons eu du mal à gérer le temps d'exécution, par exemple le temps d'exécution de l'option "l" dépasse une fois sur deux le temps autorisé.
 - Les options "t" et "s" ont été les plus durs à réaliser.
 - Le gnuplot a été difficile réaliser.
+- Parfois, un message d'erreur apparaît lorsqu'on lance les options "t" et "s" alors qu'il n'y a pas d'erreur. 
 
 # Répartition des tâches :
 
