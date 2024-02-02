@@ -1,182 +1,189 @@
 #define OPTION_S
-#define OPTION_S
 
 #include "s.h"
 
-Distance* Newdistance(float dist) {
-    Distance* p = malloc(sizeof(Distance));
-    if(p == NULL){
-    exit(1);
+// Fonction pour créer un nouveau nœud de distance
+Distance* NewDistance(float dist) {
+    Distance* newDistance = malloc(sizeof(Distance));
+    if(newDistance == NULL){
+        exit(1);
     }
-    p->distance = dist;
-    p->pNext = NULL;
-    return p;
+    newDistance->distance = dist;
+    newDistance->pNext = NULL;
+    return newDistance;
 }
 
+// Fonction pour créer un nouveau nœud de l'arbre AVL
 AVL* createAVL(int routeNbr, float dist) {
-    AVL* pNew = malloc(sizeof(AVL));
-    if(pNew == NULL){
-    exit(2);
+    AVL* newNode = malloc(sizeof(AVL));
+    if(newNode == NULL){
+        exit(2);
     }
-    pNew->routeid = routeNbr;
-    pNew->distance = Newdistance(dist);
-    pNew->pL = NULL;
-    pNew->pR = NULL;
-    pNew->taille = 1;
-    pNew->minDistance = dist;
-    pNew->maxDistance = dist;
-    pNew->moyenne = 0;
-    pNew->moyennedistance = dist;
-    pNew->nombredist = 1;
-    pNew->sommedist = dist;
-    return pNew;
+    newNode->routeid = routeNbr;
+    newNode->distance = NewDistance(dist);
+    newNode->pL = NULL;
+    newNode->pR = NULL;
+    newNode->taille = 1;
+    newNode->minDistance = dist;
+    newNode->maxDistance = dist;
+    newNode->moyenne = 0;
+    newNode->moyennedistance = dist;
+    newNode->nombredist = 1;
+    newNode->sommedist = dist;
+    return newNode;
 }
 
-//utile pour le remplissage du 2ème AVL
+// Fonction pour créer un second nœud AVL avec des informations supplémentaires
 AVL* createAVL2(int routeNbr, float maxdist, float mindist, float moyenne, float moyennedist) {
-    AVL* pNew = malloc(sizeof(AVL));
-    if(pNew == NULL){
-    exit(2);
+    AVL* newNode = malloc(sizeof(AVL));
+    if(newNode == NULL){
+        exit(2);
     }
-    pNew->routeid = routeNbr;
-    pNew->pL = NULL;
-    pNew->pR = NULL;
-    pNew->taille = 1;
-    pNew->minDistance = mindist;
-    pNew->maxDistance = maxdist;
-    pNew->moyenne = moyenne;
-    pNew->moyennedistance = moyennedist;
-    return pNew;
+    newNode->routeid = routeNbr;
+    newNode->pL = NULL;
+    newNode->pR = NULL;
+    newNode->taille = 1;
+    newNode->minDistance = mindist;
+    newNode->maxDistance = maxdist;
+    newNode->moyenne = moyenne;
+    newNode->moyennedistance = moyennedist;
+    return newNode;
 }
 
-int taille(AVL* p) {
-    if (p == NULL){
+// Fonction pour obtenir la taille de l'arbre AVL
+int size(AVL* node) {
+    if (node == NULL){
         return 0;
     }
-    return p->taille;
+    return node->taille;
 }
 
-int getEquilibre(AVL* p) {
-    if (p == NULL){
+// Fonction pour calculer le facteur d'équilibre d'un nœud dans l'arbre AVL
+int getBalance(AVL* node) {
+    if (node == NULL){
         return 0;
     }
-    return taille(p->pL) - taille(p->pR);
+    return size(node->pL) - size(node->pR);
 }
 
-AVL* rotationDroite(AVL* p) {
-    AVL* p1= p->pL;
-    AVL* p2 = p1->pR;
+// Fonction pour effectuer une rotation à droite
+AVL* rotateRight(AVL* node) {
+    AVL* leftChild = node->pL;
+    AVL* subtree = leftChild->pR;
 
-    p1->pR = p;
-    p->pL = p2;
+    leftChild->pR = node;
+    node->pL = subtree;
 
-    p->taille = 1 + ((taille(p->pL) > taille(p->pR)) ? taille(p->pL) : taille(p->pR));
-    p1->taille = 1 + ((taille(p1->pL) > taille(p1->pR)) ? taille(p1->pL) : taille(p1->pR));
+    node->taille = 1 + ((size(node->pL) > size(node->pR)) ? size(node->pL) : size(node->pR));
+    leftChild->taille = 1 + ((size(leftChild->pL) > size(leftChild->pR)) ? size(leftChild->pL) : size(leftChild->pR));
 
-    return p1;
+    return leftChild;
 }
 
-AVL* rotationGauche(AVL* p) {
-    AVL* p1 = p->pR;
-    AVL* p2 = p1->pL;
+// Fonction pour effectuer une rotation à gauche
+AVL* rotateLeft(AVL* node) {
+    AVL* rightChild = node->pR;
+    AVL* subtree = rightChild->pL;
 
-    p1->pL = p;
-    p->pR = p2;
+    rightChild->pL = node;
+    node->pR = subtree;
 
-    p->taille = 1 + ((taille(p->pL) > taille(p->pR)) ? taille(p->pL) : taille(p->pR));
-    p1->taille = 1 + ((taille(p1->pL) > taille(p1->pR)) ? taille(p1->pL) : taille(p1->pR));
+    node->taille = 1 + ((size(node->pL) > size(node->pR)) ? size(node->pL) : size(node->pR));
+    rightChild->taille = 1 + ((size(rightChild->pL) > size(rightChild->pR)) ? size(rightChild->pL) : size(rightChild->pR));
 
-    return p1;
+    return rightChild;
 }
 
-AVL* insertAVL(AVL* p, int routenbr, float dist) {
-    if (p == NULL){
+// Fonction pour insérer un nouveau nœud dans l'arbre AVL
+AVL* insertAVL(AVL* node, int routenbr, float dist) {
+    if (node == NULL){
         return createAVL(routenbr, dist);
-	}
-    if (routenbr < p->routeid){
-        p->pL = insertAVL(p->pL, routenbr, dist);
-	}
-    else if (routenbr > p->routeid){
-        p->pR = insertAVL(p->pR, routenbr, dist);
-	}
-    else { //même numéro de route donc on compare les distances
-        Distance* pNew = Newdistance(dist);
-        pNew->distance = p->distance->distance;
-        p->distance = pNew;
+    }
+    if (routenbr < node->routeid){
+        node->pL = insertAVL(node->pL, routenbr, dist);
+    }
+    else if (routenbr > node->routeid){
+        node->pR = insertAVL(node->pR, routenbr, dist);
+    }
+    else { // Même numéro de route, donc comparaison des distances
+        Distance* newDistance = NewDistance(dist);
+        newDistance->distance = node->distance->distance;
+        node->distance = newDistance;
 
-        // Mettre à jour les distances et la moyenne
-        p->minDistance = (p->minDistance < dist) ? p->minDistance : dist;
-        p->maxDistance = (p->maxDistance > dist) ? p->maxDistance : dist;
-        p->moyenne = p->maxDistance - p->minDistance;
-	
-	// Mettre à jour la moyenne
-        p->sommedist += dist;
-        p->nombredist++;
-	p->moyennedistance = p->sommedist / p->nombredist;
+        // Mise à jour des distances et de la moyenne
+        node->minDistance = (node->minDistance < dist) ? node->minDistance : dist;
+        node->maxDistance = (node->maxDistance > dist) ? node->maxDistance : dist;
+        node->moyenne = node->maxDistance - node->minDistance;
+        
+        // Mise à jour de la moyenne
+        node->sommedist += dist;
+        node->nombredist++;
+        node->moyennedistance = node->sommedist / node->nombredist;
     }
 
-    p->taille = 1 + ((taille(p->pL) > taille(p->pR)) ? taille(p->pL) : taille(p->pR));
+    node->taille = 1 + ((size(node->pL) > size(node->pR)) ? size(node->pL) : size(node->pR));
 
-    int balance = getEquilibre(p);
+    int balance = getBalance(node);
 
-    if (balance > 1 && routenbr < p->pL->routeid){
-        return rotationDroite(p);
-	}
-    if (balance < -1 && routenbr > p->pR->routeid){
-        return rotationGauche(p);
-	}
-    if (balance > 1 && routenbr > p->pL->routeid){
-        p->pL = rotationGauche(p->pL);
-        return rotationDroite(p);
+    // Effectuer des rotations pour maintenir la propriété AVL
+    if (balance > 1 && routenbr < node->pL->routeid){
+        return rotateRight(node);
+    }
+    if (balance < -1 && routenbr > node->pR->routeid){
+        return rotateLeft(node);
+    }
+    if (balance > 1 && routenbr > node->pL->routeid){
+        node->pL = rotateLeft(node->pL);
+        return rotateRight(node);
     }
 
-    if (balance < -1 && routenbr < p->pR->routeid) {
-        p->pR = rotationDroite(p->pR);
-        return rotationGauche(p);
+    if (balance < -1 && routenbr < node->pR->routeid) {
+        node->pR = rotateRight(node->pR);
+        return rotateLeft(node);
     }
 
-    return p;
+    return node;
 }
 
-
-// Fonction utilitaire pour insérer un nœud dans l'AVL p2 trié par distance
+// Fonction pour insérer un nœud dans l'arbre AVL p2 trié par la distance
 AVL* insertDistance(AVL* p2, int numid, float maxdist, float mindist, float moyenne, float moyennedistance) {
     if (p2 == NULL) {
         return createAVL2(numid, maxdist, mindist, moyenne, moyennedistance);
     }
 
+    // Insérer en fonction de la moyenne
     if (moyenne < p2->moyenne) {
-        p2->pL = insertDistance(p2->pL,numid, maxdist, mindist, moyenne, moyennedistance);
+        p2->pL = insertDistance(p2->pL, numid, maxdist, mindist, moyenne, moyennedistance);
     } else if (moyenne > p2->moyenne) {
         p2->pR = insertDistance(p2->pR, numid, maxdist, mindist, moyenne, moyennedistance);
     }
 
-    p2->taille = 1 + ((taille(p2->pL) > taille(p2->pR)) ? taille(p2->pL) : taille(p2->pR));
-
-    int balance = getEquilibre(p2);
+    // Mettre à jour la taille et effectuer les rotations nécessaires
+    p2->taille = 1 + ((size(p2->pL) > size(p2->pR)) ? size(p2->pL) : size(p2->pR));
+    int balance = getBalance(p2);
 
     if (balance > 1 && moyenne < p2->pL->moyenne) {
-        return rotationDroite(p2);
+        return rotateRight(p2);
     }
     if (balance < -1 && moyenne > p2->pR->moyenne) {
-        return rotationGauche(p2);
+        return rotateLeft(p2);
     }
     if (balance > 1 && moyenne > p2->pL->moyenne) {
-        p2->pL = rotationGauche(p2->pL);
-        return rotationDroite(p2);
+        p2->pL = rotateLeft(p2->pL);
+        return rotateRight(p2);
     }
     if (balance < -1 && moyenne < p2->pR->moyenne) {
-        p2->pR = rotationDroite(p2->pR);
-        return rotationGauche(p2);
+        p2->pR = rotateRight(p2->pR);
+        return rotateLeft(p2);
     }
 
     return p2;
 }
 
-//fonction pour parcourir notre premier AVL et mettres ses données dans le 2ème AVL
+// Fonction pour parcourir le premier arbre AVL et copier ses données dans le second arbre AVL
 AVL* insertAVL2(AVL* p, AVL* p2) {
     if (p == NULL) {
-        return p2; // Aucune donnée à copier
+        return p2; // Pas de données à copier
     }
 
     // Copier le nœud actuel dans p2
@@ -189,45 +196,48 @@ AVL* insertAVL2(AVL* p, AVL* p2) {
     return p2;
 }
 
-void displayInfixeInv(AVL* p) {
-    if (p != NULL) {
+// Fonction pour afficher l'arbre AVL en ordre infixe inversé
+void displayInfixeInv(AVL* node) {
+    if (node != NULL) {
         // Afficher les nœuds du sous-arbre droit
-        displayInfixeInv(p->pR);
+        displayInfixeInv(node->pR);
 
         // Afficher le nœud actuel
-       printf("%d ; %f ; %f; %f; %f\n", p->routeid, p->minDistance, p->moyennedistance, p->maxDistance, p->moyenne);
+        printf("%d ; %f ; %f; %f; %f\n", node->routeid, node->minDistance, node->moyennedistance, node->maxDistance, node->moyenne);
 
         // Afficher les nœuds du sous-arbre gauche
-        displayInfixeInv(p->pL);
+        displayInfixeInv(node->pL);
     }
 }
 
-void destroyAVL(AVL* p) {
-    if (p != NULL) {
-        destroyAVL(p->pL);
-        destroyAVL(p->pR);
-        while( p -> distance != NULL){
-	Distance* temp = p-> distance -> pNext;
-	free(p->distance);
-	p-> distance = temp;
-	}
-        free(p);
+// Fonction pour libérer la mémoire de l'arbre AVL
+void destroyAVL(AVL* node) {
+    if (node != NULL) {
+        destroyAVL(node->pL);
+        destroyAVL(node->pR);
+        while(node->distance != NULL){
+            Distance* temp = node->distance->pNext;
+            free(node->distance);
+            node->distance = temp;
+        }
+        free(node);
     }
 }
-
 
 int main() {
     AVL* AVL1 = NULL;
     AVL* AVL2 = NULL;
     float dist;
     int routeid;
-    // Lecture des idroutes et distances pour remplir l'arbre root1
+    // Lecture des idroutes et distances pour remplir l'arbre AVL1
     while (scanf("%d;%f\n", &routeid, &dist) == 2) {
         AVL1 = insertAVL(AVL1, routeid, dist);
     }
-	AVL2 = insertAVL2(AVL1,AVL2);
+    AVL2 = insertAVL2(AVL1, AVL2);
     // Afficher le contenu de AVL2 (trié par moyenne dans l'ordre décroissant)
     displayInfixeInv(AVL2);
+    // Libérer la mémoire
+    destroyAVL(AVL1);
+    destroyAVL(AVL2);
     return 0;
 }
-
