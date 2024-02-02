@@ -43,8 +43,11 @@ fi
 
         # Création du fichier de commandes pour Gnuplot
         gnuplot <<- GNUPLOT_SCRIPT
+	#Définition du séparateur
         set datafile separator ","
+	#Définition de la taille de l'image :
         set terminal pngcairo
+	#Sauvegarde du graphique dans le fichier images :
         set output 'images/graphique_d1.png'
 
         set style fill solid  
