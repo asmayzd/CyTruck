@@ -12,14 +12,15 @@ d1() {
 # Compter le nombre de trajets pour chaque conducteur
     awk -F";" '/;1;/ {compteur[$6] += 1} END {for (nom in compteur) print compteur[nom], nom}' data/data.csv | sort -nrk1,1 | head -10 > temp/temp_d1.csv
 
+#Afficher les résultats
     cat temp/temp_d1.csv
 
 fin_timer_d1=$(date +%s)
 
-        # Calculez la durée totale en secondes.
+        # Calculer la durée totale en secondes.
         duree_option_d1=$((fin_timer_d1 - debut_timer_d1))
 
-        # Affichez la durée.
+        # Afficher la durée.
         echo  "Le traitement de l'option -d1 a pris $duree_option_d1 secondes."
 	
 	# Créer un fichier de données pour l'histogramme
@@ -46,12 +47,12 @@ fi
         set terminal pngcairo
         set output 'images/graphique_d1.png'
 
-        set style fill solid  # solid color boxes
-        unset key             # turn off all titles
+        set style fill solid  
+        unset key             
 
         set boxwidth 0.5
         set offsets 0,0,0.5-0.5/2,0.5
-        set yrange [0:*]  # Utilisez la plage par défaut pour l'axe y
+        set yrange [0:*]  
         set title 'Graphique -d1'
         set ylabel 'Noms des conducteurs'
         set xlabel 'Nombre de trajets'
