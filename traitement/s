@@ -1,10 +1,10 @@
 #!/bin/bash
 
-
+# Assurer que le script a les permissions d'exécution
 chmod 777 traitement/s
 chmod 777 progc/s.c
 
-
+# Définition de la fonction s
 s() {
 
     # Vérifier si l'exécutable existe et est exécutable
@@ -16,8 +16,10 @@ fi
     	 # Enregistrez le temps de début.
         debut_timer_s=$(date +%s)
 
+	#Statistiques des étapes
 	cat "data/data.csv" | tail +2 | cut -d';' -f1,5 | progc/s | head -50  > temp/temp_s.csv
-        
+
+	#Afficher les résultats.
 	cat temp/temp_s.csv
 
  fin_timer_s=$(date +%s)
@@ -27,13 +29,17 @@ fi
 
         # Affichez la durée.
         echo  "Le traitement de l'option -s a pris $duree_option_s secondes."
- 
+
+ 	# Créer un fichier de données pour l'histogramme
 	cp temp/temp_s.csv temp/histogram_datas.csv
+ 
     # Revenir au répertoire précédent si nécessaire
     cd .
 
-	 generate_s
+# Appel de la fonction pour tracer le graphique
+generate_s
 
+# Ouvre automatiquement l'image du graphique
 display images/graphique_s.png
 }
 
@@ -46,22 +52,27 @@ generate_s() {
 
     # Partie graphique (gnuplot)
     gnuplot <<-GNUPLOT_SCRIPT
-
-    # Ouverture du script Gnuplot
+	#Définition de la taille de l'image :
         set terminal png size 900,600 #définit la taille de l'image
-set output "images/graphique_s.png" #sauvegarde le graphique dans le fichier graphique_option_s.png
-set datafile separator ";"
+	#Sauvegarde du graphique dans le fichier images :
+	set output "images/graphique_s.png" #sauvegarde le graphique dans le fichier graphique_option_s.png
+	#Définition du séparateur
+	set datafile separator ";"
+ 
 set title "Graphique -s" #donne un titre au graphique
 set border 4095 front lt black linewidth 1.000 dashtype solid
 set xlabel "ROUTE ID" #donne un titre à l'axe des abscisses
 set ylabel "DISTANCE (Km)" #donne un titre à l'axe des ordonnées
 
 set xtics rotate by -60
-
+#Définition de la couleur du graphique
 Shadecolor = "light-blue"
+
+# Tracer les données à partir du fichier
 plot 'temp/histogram_datas.csv' using 0:2:4:xticlabels(1) with filledcurve fc rgb Shadecolor title "Distance Min/Max", \
 '' using 0:3:xticlabels(1) smooth mcspline lw 2 title "Distance average"
 GNUPLOT_SCRIPT
 }
 
+#Appel de la fonction s
 s
