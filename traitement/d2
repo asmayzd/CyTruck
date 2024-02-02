@@ -3,17 +3,20 @@
 # Assurer que le script d2 a les permissions d'exécution
 chmod 777 traitement/d2
 
+# Définition de la fonction d2
 d2(){
 
 	# Enregistrez le temps de début.
         debut_timer_d2=$(date +%s)
 
+# Trouver les conducteurs avec la plus grande distance
 	cut -d';' -f5,6 data/data.csv |
 	awk -v OFS=';' -F';'  'NR>1 {journey_lengths_sum[$2]+=$1} END {for (driver in journey_lengths_sum) print driver, journey_lengths_sum[driver]}' |
 	sort -t';' -nrk2,2 |
 	head -n10 |
 	awk -F';' '{gsub(/ /, ",", $2); print $2 ";" $1}' > temp/temp_d2.csv
 
+#Afficher les résultats
 	cat temp/temp_d2.csv
 
 fin_timer_d2=$(date +%s)
@@ -45,8 +48,11 @@ fi
 
         # Exécution de Gnuplot
         gnuplot <<- GNUPLOT_SCRIPT
+	#Définition du séparateur
         set datafile separator ","
+	#Définition de la taille de l'image :
         set terminal pngcairo 
+	#Sauvegarde du graphique dans le fichier images :
         set output 'images/graphique_d2.png'
 
         set style fill solid  # solid color boxes
@@ -61,11 +67,10 @@ fi
         set xlabel 'Distance parcourue'
 	set xtics rotate by -45
 
-# Code couleur pour le violet en RGB (en pourcentage)
-#violet = 0x993399  # Violet foncé
 
         plot 'temp/histogram_datad2.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
 GNUPLOT_SCRIPT
 
 }
+# Appel de la fonction d1
 d2
