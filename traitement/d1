@@ -5,31 +5,31 @@ chmod 777 traitement/d1
 
 # Définition de la fonction d1
 d1() {
-    
-	# Enregistrez le temps de début.
+
+
+        # Enregistrez le temps de début.
         debut_timer_d1=$(date +%s)
 
 # Compter le nombre de trajets pour chaque conducteur
     awk -F";" '/;1;/ {compteur[$6] += 1} END {for (nom in compteur) print compteur[nom], nom}' data/data.csv | sort -nrk1,1 | head -10 > temp/temp_d1.csv
 
-#Afficher les résultats
     cat temp/temp_d1.csv
 
 fin_timer_d1=$(date +%s)
 
-        # Calculer la durée totale en secondes.
+        # Calculez la durée totale en secondes.
         duree_option_d1=$((fin_timer_d1 - debut_timer_d1))
 
-        # Afficher la durée.
-        echo  "Le traitement de l'option -d1 a pris $duree_option_d1 secondes."
-	
-	# Créer un fichier de données pour l'histogramme
+        # Affichez la durée.
+        echo  "\nLe traitement de l'option -d1 a pris $duree_option_d1 secondes.\n"
+
+        # Créer un fichier de données pour l'histogramme
     awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv | sort -t',' -k2,2n > temp/histogram_data.csv
 
     # Appel de la fonction pour tracer le graphique
     generate_d1
 
-	# Ouvre automatiquement l'image du graphique
+        # Ouvre automatiquement l'image du graphique
         display images/graphique_d1.png
 
 }
@@ -43,28 +43,24 @@ fi
 
         # Création du fichier de commandes pour Gnuplot
         gnuplot <<- GNUPLOT_SCRIPT
-	#Définition du séparateur
         set datafile separator ","
-	#Définition de la taille de l'image :
         set terminal pngcairo
-	#Sauvegarde du graphique dans le fichier images :
         set output 'images/graphique_d1.png'
 
-        set style fill solid  
-        unset key             
+        set style fill solid  # solid color boxes
+        unset key             # turn off all titles
 
         set boxwidth 0.5
         set offsets 0,0,0.5-0.5/2,0.5
-        set yrange [0:*]  
+        set yrange [0:*]  # Utilisez la plage par défaut pour l'axe y
         set title 'Graphique -d1'
         set ylabel 'Noms des conducteurs'
         set xlabel 'Nombre de trajets'
-		
-	# Tracer les données à partir du fichier
+
+
         plot 'temp/histogram_data.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
 GNUPLOT_SCRIPT
 
 }
 # Appel de la fonction d1
 d1
-
