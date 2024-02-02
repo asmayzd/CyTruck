@@ -11,6 +11,12 @@ s() {
     # Compiler t.c pour créer un exécutable
     gcc -o progc/s progc/s.c
 
+    # Vérifier si l'exécutable existe et est exécutable
+if [[ ! -x "progc/s" ]]; then
+    echo "L'exécutable $progc/s est introuvable ou n'est pas exécutable."
+    exit 1
+fi
+
     	 # Enregistrez le temps de début.
         debut_timer_s=$(date +%s)
 
