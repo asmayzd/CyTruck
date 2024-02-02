@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Assurer que le script a les permissions 
 chmod 777 traitement/t
 chmod 777 progc/t.c
 
@@ -15,9 +16,14 @@ fi
     # Enregistrez le temps de début.
         debut_timer_t=$(date +%s)
 
+	#Trouver les 10 villes les plus traversées
         cat "data/data.csv" | tail +2 | cut -d';' -f1,2,3,4| progc/t | head -10 > temp/temp_t.csv
 
+	# Créer un fichier de données pour l'histogramme
 	cat "temp/temp_t.csv" | sort -t ';' -k1,1 -f > temp/histogram_datat.csv
+
+	#Afficher les résultats
+	cat temp/temp_t.csv
 
 fin_timer_t=$(date +%s)
 
@@ -30,8 +36,10 @@ fin_timer_t=$(date +%s)
     # Revenir au répertoire précédent si nécessaire
     cd .
 
+# Appel de la fonction pour tracer le graphique
         generate_t
 
+# Ouvre automatiquement l'image du graphique
 display images/graphique_t.png
 
 }
@@ -43,12 +51,13 @@ generate_t() {
         exit 1
     fi
 
-    # Partie graphique (gnuplot)
+    # Partie graphique 
     gnuplot <<-GNUPLOT_SCRIPT
-
-    # Ouverture du script Gnuplot
-        set terminal png # Définit le type de fichier de sortie comme une image PNG
-        set output 'images/graphique_t.png' # Définit le nom et l'emplacement du fichier de sortie
+	#Définition de la taille de l'image :
+        set terminal png 
+	#Sauvegarde du graphique dans le fichier images :
+        set output 'images/graphique_t.png' 
+	#Définition du séparateur
         set datafile separator ";"
 
         # Configuration du tracé
@@ -68,4 +77,5 @@ generate_t() {
 GNUPLOT_SCRIPT
 }
 
+# Appel de la fonction t
 t
