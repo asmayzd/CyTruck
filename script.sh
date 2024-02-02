@@ -77,6 +77,7 @@ while true; do
     echo "4. Fonction -t"
     echo "5. Fonction -s"
     echo "6. Aide"
+    echo "7. Exit"
     read -p "Entrez le numéro de la fonction que vous voulez exécuter (séparez les choix par des espaces) : " choix
 
     # Diviser les choix en un tableau
@@ -85,9 +86,9 @@ while true; do
     # Vérifier chaque choix
     choix_valid=true
     for c in "${choix_array[@]}"; do
-        if ! [[ "$c" =~ ^[1-6]$ ]]; then
+        if ! [[ "$c" =~ ^[1-7]$ ]]; then
             choix_valid=false
-            echo "Choix '$c' invalide. Veuillez entrer des numéros de fonction entre 1 et 6."
+            echo "Choix '$c' invalide. Veuillez entrer des numéros de fonction entre 1 et 7."
             break
         fi
     done
@@ -126,6 +127,7 @@ for c in "${choix_array[@]}"; do
             fi
             chemin_script="traitement/s" ;;
         6) cat "help.txt" ;;
+	7) echo "exit"; break ;;
     esac
 
 
