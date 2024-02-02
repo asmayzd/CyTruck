@@ -1,21 +1,23 @@
 #include "t.h"
 
-NODE * createNode (char word[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){ //création d'un nouveau noeud
+// La fonction ci-dessou permet de créer un nouveau noeud.
+NODE * createNode (char word[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){ 
     NODE* pNew = malloc(sizeof(NODE));
     if (pNew == NULL){
-        exit(2);
+        exit(1);
     }
-    strcpy(pNew->ville , word);    //copie du nom de ville : strcpy(destination de la copie, source);
+    strcpy(pNew->ville , word);    //copie du nom de ville 
     pNew->nb_apparition_par_trajet = NB_apparition_par_trajet;
     pNew->nb_apparition_ville_depart_trajet = NB_apparition_ville_depart_trajet;
     pNew->pNext = NULL;
     return pNew;
 }
 
-NODE* addStart (NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){  //ajout en début de liste 
+// La fonction ci-dessou permet d'ajouter un noeud en début de liste. 
+NODE* addStart (NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){  
     NODE * pNew = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
     if (pNew == NULL){
-        exit(2601); //pour strcmp()
+        exit(2); //pour strcmp()
     }
     if (pHead == NULL){
         pHead = pNew;
@@ -27,12 +29,12 @@ NODE* addStart (NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_a
         return pHead;
     }
 }
-
-NODE * addEnd(NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){  //ajout en fin de liste 
+//La fonction ci-dessou permet d'ajouter un noeud en fin de liste. 
+NODE * addEnd(NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){  
     NODE* pNew = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
     NODE* pList = pHead;
     if (pNew == NULL){
-        exit(2602);
+        exit(3);
     }
     if (pHead == NULL){
         pHead = pNew;
@@ -45,26 +47,26 @@ NODE * addEnd(NODE * pHead, char nom[], int NB_apparition_par_trajet, int NB_app
     }
     return pHead;
 }
-
-void addBetweenNodes(NODE* pList, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){        //ajoute le noeud entre pList et pList->pNext
+  // La procédure ci-dessou permet d'ajouter le noeud entre pList et pList->pNext
+void addBetweenNodes(NODE* pList, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){      
     if (pList == NULL){
-        exit(2603);
+        exit(1);
     }
     NODE* pNew = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
     if (pNew == NULL){
-        exit(2604);
+        exit(2);
     }
     pNew->pNext = pList->pNext;
     pList->pNext = pNew;
 }
-
-NODE* insertNode(NODE* pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){ // inserer dans la liste
-    //CAS 1 : pas de mot dans la liste
-    if (pHead == NULL){
+ // La fonction ci-dessou permet d'inserer un noeud dans la liste dans l'ordre alphabétique  
+NODE* insertNode(NODE* pHead, char nom[], int NB_apparition_par_trajet, int NB_apparition_ville_depart_trajet){ 
+    
+    if (pHead == NULL){                                               //si le noeud n'existe pas on le crée
         pHead = createNode(nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
     }
-    //CAS 2 : 1er mot de la liste
-    else if (strcmp(nom, pHead->ville) < 0) {
+   
+    else if (strcmp(nom, pHead->ville) < 0) {                        //strcmp permet de comparer les noms des villes 
         pHead = addStart(pHead, nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
     }
     else{
@@ -74,11 +76,11 @@ NODE* insertNode(NODE* pHead, char nom[], int NB_apparition_par_trajet, int NB_a
             pPrevious = pList;
             pList = pList->pNext;
         }
-        //CAS 4 : on arrive sur dernier mot de liste + mot à placer après -> ajout du mot
+       
         if (pList->pNext == NULL && strcmp(nom, pList->ville) > 0){
             pList = addEnd(pList, nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
         }
-        //CAS 3 : Insertion du mot avant le mot sur lequel on est (cad là où on veut)
+        
         else if (strcmp(nom, pList->ville) < 0){
             addBetweenNodes(pPrevious, nom, NB_apparition_par_trajet, NB_apparition_ville_depart_trajet);
         }
@@ -91,33 +93,33 @@ NODE* insertNode(NODE* pHead, char nom[], int NB_apparition_par_trajet, int NB_a
     return pHead;
 }
 
+// Cette procédure permet d'afficher la liste 
 void displayList(NODE* pHead){  //afficher la liste
     if (pHead == NULL){
-        exit(2606);
+        exit(3);
     }
-    /*printf("Affichage Liste (ordre alphabétique) :     pHead : %s\n", pHead->ville);*/
+    
     while(pHead != NULL){
         printf("%s;%d;%d\n", pHead->ville, pHead->nb_apparition_par_trajet, pHead->nb_apparition_ville_depart_trajet);
         pHead= pHead->pNext;
     }
 }
 
-void destroyNode(NODE* pNode) {  //supprimer un chainon
+// La procédure ci-dessou permet de supprimer un chainon
+void destroyNode(NODE* pNode) {  
     if (pNode != NULL) {
         destroyNode(pNode->pNext);
         free(pNode);
-        //printf("Libération Node réussie.\n");
+       
     }
 }
 
-//Création des NOEUDS 
-
-// 1) CreateNode spécifique pour Route_ID
+// La fonction ci-dessou crée un noeud pour les différentes étapes
 Node_RouteID* create_Node_RouteID(int RouteID){
     Node_RouteID* pNew = malloc(sizeof(Node_RouteID));
     if(pNew == NULL){
-        printf("Erreur 1500 : pointeur NULL.\n");
-        exit(1500);
+        printf("Erreur : pointeur NULL.\n");
+        exit(1);
     }
     pNew->Route_ID = RouteID;
     pNew->equilibre = 0;
@@ -126,7 +128,7 @@ Node_RouteID* create_Node_RouteID(int RouteID){
     return pNew;
 }
 
-// 2) creer arbre général
+//On créer l'arbre qui contient les noeuds avec toute les informations 
 Tree* createTree(char nom[], int Route_ID){
     Tree* pNew = malloc(sizeof(Tree));
     if(pNew == NULL){
@@ -153,15 +155,14 @@ Tree* createTree(char nom[], int Route_ID){
     return pNew;
 }
 
-//ROTATIONS SIMPLES:
-// 1) Rotations spécifiques pour Route_ID
+
+// La fonction permet d'effectuer les rotations gauches en fonction de RouteId
 Node_RouteID* RotationGauche_RouteID(Node_RouteID* p_RouteID){
     if (p_RouteID==NULL || p_RouteID->pR == NULL){
-        exit(1910);
+        exit(3);
     }
     Node_RouteID* pivot = p_RouteID->pR;
 
-    //Equilibrage
     if(p_RouteID->equilibre == 2){
         if(pivot->equilibre == 0){
             pivot->equilibre = -1;
@@ -176,8 +177,8 @@ Node_RouteID* RotationGauche_RouteID(Node_RouteID* p_RouteID){
             p_RouteID->equilibre = -1;
         }
         else{
-            printf("Cas non pris en charge 1911. \n");
-            exit(1911);
+            printf("Cas non pris en charge. \n");
+            exit(1);
         }
     }
 
@@ -195,34 +196,32 @@ Node_RouteID* RotationGauche_RouteID(Node_RouteID* p_RouteID){
             p_RouteID->equilibre = -1;
         }
         else{
-            printf("Cas non pris en charge 1912. \n");
-            exit(1912);
+            printf("Cas non pris en charge. \n");
+            exit(2);
         }
     }
 
     else{
-        printf("Cas non pris en charge 1913. \n");
-        exit(1913);
+        printf("Cas non pris en charge. \n");
+        exit(3);
     }
 
-    //Rotation
     p_RouteID->pR = pivot->pL;
     pivot->pL = p_RouteID;
     if (pivot == NULL){
-        printf("Erreur 1914 : pointeur NULL.\n");
-        exit(1914);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
 
     return pivot;
 }
-
+// La fonction permet d'effectuer les rotations droites en fonction de RouteId
 Node_RouteID* RotationDroite_RouteID(Node_RouteID* p_RouteID){
     if (p_RouteID==NULL || p_RouteID->pL == NULL){
-        exit(1915);
+        exit(2);
     }
     Node_RouteID* pivot = p_RouteID->pL;
 
-    //Equilibrage
     if(p_RouteID->equilibre == -2){
         //Rotation simple 1
         if(pivot->equilibre == -1){
@@ -239,8 +238,8 @@ Node_RouteID* RotationDroite_RouteID(Node_RouteID* p_RouteID){
             p_RouteID->equilibre = 1;
         }
         else{
-            printf("Cas non pris en charge 1916. \n");
-            exit(1916);
+            printf("Cas non pris en charge. \n");
+            exit(3);
         }
     }
 
@@ -258,35 +257,33 @@ Node_RouteID* RotationDroite_RouteID(Node_RouteID* p_RouteID){
             p_RouteID->equilibre = 0;
         }
         else{
-            printf("Cas non pris en charge 1917. \n");
-            exit(1917);
+            printf("Cas non pris en charge. \n");
+            exit(1);
         }
     }
 
     else{
-        printf("Cas non pris en charge 1918. \n");
-        exit(1918);
+        printf("Cas non pris en charge. \n");
+        exit(2);
     }
 
-    //Rotation
     p_RouteID->pL = pivot->pR;
     pivot->pR = p_RouteID;
     if (pivot == NULL){
-        printf("Erreur 1919 : pointeur NULL.\n");
-        exit(1919);
+        printf("Erreur: pointeur NULL.\n");
+        exit(3);
     }
 
     return pivot;
 }
 
-// 2) Rotations générales
+// La fonction ci-dessou permet d'effectuer les rotations gauches de l'arbre qui contient les noeuds avec toute les informations.
 Tree* RotationGauche(Tree* p){
     if (p==NULL || p->pR == NULL){
-        exit(10);
+        exit(1);
     }
     Tree* pivot = p->pR;
 
-    //Equilibrage
     if(p->equilibre == 2){
         if(pivot->equilibre == 0){
             pivot->equilibre = -1;
@@ -301,8 +298,8 @@ Tree* RotationGauche(Tree* p){
             p->equilibre = -1;
         }
         else{
-            printf("Cas non pris en charge 11. \n");
-            exit(11);
+            printf("Cas non pris en charge. \n");
+            exit(2);
         }
     }
 
@@ -320,42 +317,41 @@ Tree* RotationGauche(Tree* p){
             p->equilibre = -1;
         }
         else{
-            printf("Cas non pris en charge 12. \n");
-            exit(12);
+            printf("Cas non pris en charge. \n");
+            exit(3);
         }
     }
 
     else{
-        printf("Cas non pris en charge 13. \n");
-        exit(13);
+        printf("Cas non pris en charge. \n");
+        exit(1);
     }
 
-    //Rotation
+
     p->pR = pivot->pL;
     pivot->pL = p;
     if (pivot == NULL){
-        printf("Erreur 14 : pointeur NULL.\n");
-        exit(14);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
 
     return pivot;
 }
 
-
+// La fonction ci-dessou permet d'effectuer les rotations droites de l'arbre qui contient les noeuds avec toute les informations.
 Tree* RotationDroite(Tree* p){
     if (p==NULL || p->pL == NULL){
-        exit(15);
+        exit(3);
     }
     Tree* pivot = p->pL;
 
-    //Equilibrage
     if(p->equilibre == -2){
         //Rotation simple 1
         if(pivot->equilibre == -1){
             pivot->equilibre = 0;
             p->equilibre = 0;
         }
-        //Rotation Simple 2
+     
         else if(pivot->equilibre == 0){
             pivot->equilibre = 1;
             p->equilibre = -1;
@@ -365,8 +361,8 @@ Tree* RotationDroite(Tree* p){
             p->equilibre = 1;
         }
         else{
-            printf("Cas non pris en charge 16. \n");
-            exit(16);
+            printf("Cas non pris en charge. \n");
+            exit(1);
         }
     }
 
@@ -384,22 +380,21 @@ Tree* RotationDroite(Tree* p){
             p->equilibre = 0;
         }
         else{
-            printf("Cas non pris en charge 17. \n");
-            exit(17);
+            printf("Cas non pris en charge. \n");
+            exit(3);
         }
     }
 
     else{
-        printf("Cas non pris en charge 18. \n");
-        exit(18);
+        printf("Cas non pris en charge. \n");
+        exit(1);
     }
 
-    //Rotation
     p->pL = pivot->pR;
     pivot->pR = p;
     if (pivot == NULL){
-        printf("Erreur 19 : pointeur NULL.\n");
-        exit(19);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
 
     return pivot;
@@ -408,102 +403,102 @@ Tree* RotationDroite(Tree* p){
 
 //DOUBLES ROTATIONS 
 
-// 1) Doubles rotations spécifiques pour Route_ID
+// La fonction permet d'effectuer les doubles rotations gauches spécifiques pour Route_ID
 Node_RouteID* DoubleRotationGauche_RouteID(Node_RouteID* p_RouteID){
     if (p_RouteID==NULL || p_RouteID->pR==NULL || p_RouteID->equilibre!=2 || p_RouteID->pR->equilibre!=-1){
-        printf("Cas non pris en charge 1820 : pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
-        exit(1820);
+        printf("Cas non pris en charge: pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
+        exit(3);
     }
 
     p_RouteID->pR = RotationDroite_RouteID(p_RouteID->pR);
     if (p_RouteID->pR == NULL){
-        printf("Erreur 1821 : pointeur NULL.\n");
-        exit(1821);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
     p_RouteID = RotationGauche_RouteID(p_RouteID);
     if (p_RouteID == NULL){
-        printf("Erreur 1822 : pointeur NULL.\n");
-        exit(1822);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
     return p_RouteID;
 }
 
+// La fonction permet d'effectuer les doubles rotations droites spécifiques pour Route_ID
 Node_RouteID* DoubleRotationDroite_RouteID(Node_RouteID* p_RouteID){
     if (p_RouteID==NULL || p_RouteID->pL==NULL || p_RouteID->equilibre!=-2 || p_RouteID->pL->equilibre!=1){
-        printf("Cas non pris en charge 1800 : pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
-        exit(1800);
+        printf("Cas non pris en charge: pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
+        exit(3);
     }
 
     p_RouteID->pL = RotationGauche_RouteID(p_RouteID->pL);
     if (p_RouteID->pL == NULL){
-        printf("Erreur 1801 : pointeur NULL.\n");
-        exit(1801);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
 
     p_RouteID = RotationDroite_RouteID(p_RouteID);
     if (p_RouteID == NULL){
-        printf("Erreur 1802 : pointeur NULL.\n");
-        exit(1802);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
     return p_RouteID;
 }
 
 
-// 2) Doubles rotations générales
+// La fonction ci-dessou permet d'effectuer les doubles rotations gauches de l'arbre qui contient les noeuds avec toute les informations.
 Tree* DoubleRotationGauche(Tree* p){
     if (p==NULL || p->pR==NULL || p->equilibre!=2 || p->pR->equilibre!=-1){
-        printf("Cas non pris en charge 20 : pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
-        exit(20);
+        printf("Cas non pris en charge: pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
+        exit(3);
     }
 
     p->pR = RotationDroite(p->pR);
     if (p->pR == NULL){
-        printf("Erreur 21 : pointeur NULL.\n");
-        exit(21);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
     p = RotationGauche(p);
     if (p == NULL){
-        printf("Erreur 22 : pointeur NULL.\n");
-        exit(22);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
     return p;
 }
-
+// La fonction ci-dessou permet d'effectuer les doubles rotations gauches de l'arbre qui contient les noeuds avec toute les informations.
 Tree* DoubleRotationDroite(Tree* p){                                                                
     if (p==NULL || p->pL==NULL || p->equilibre!=-2 || p->pL->equilibre!=1){
-        printf("Cas non pris en charge 30 : pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
-        exit(30);
+        printf("Cas non pris en charge: pointeurs NULL ou facteurs d'équilibre incorrectes.\n");
+        exit(3);
     }
 
     p->pL = RotationGauche(p->pL);
     if (p->pL == NULL){
-        printf("Erreur 31 : pointeur NULL.\n");
-        exit(31);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
 
     p = RotationDroite(p);
     if (p == NULL){
-        printf("Erreur 32 : pointeur NULL.\n");
-        exit(32);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
     return p;
 }
 
 
 
-// EQUILIBRAGE 
 
-//1) Equilibrage spécifique pour Route_ID
+//La fonction ci-dessou permet l'équilibrage de l'AVL spécifique pour Route_ID
 Node_RouteID* equilibrerAVL_RouteID(Node_RouteID* p_RouteID){
     if (p_RouteID == NULL){
-        printf("Erreur 1700 : pointeur NULL.\n");
-        exit(1700);
+        printf("Erreur: pointeur NULL.\n");
+        exit(3);
     }
 
     if (p_RouteID->equilibre == 2){
         if (p_RouteID->pR == NULL){
-            printf("Erreur 1701 : pointeur NULL.\n");
-            exit(1701);
+            printf("Erreur: pointeur NULL.\n");
+            exit(1);
         }
 
         //Double rotation Gauche (RD puis RG)
@@ -517,14 +512,14 @@ Node_RouteID* equilibrerAVL_RouteID(Node_RouteID* p_RouteID){
         }
 
         else {
-            printf("Cas non pris en charge 1702.\n");
-            exit(1702);
+            printf("Cas non pris en charge.\n");
+            exit(2);
         }
     }
     else if (p_RouteID->equilibre == -2) {
         if (p_RouteID->pL == NULL){
-            printf("Erreur 1703 : pointeur NULL.\n");
-            exit(1703);
+            printf("Erreur: pointeur NULL.\n");
+            exit(3);
         }
 
         //Double rotation Droite (RG puis RD)
@@ -538,38 +533,36 @@ Node_RouteID* equilibrerAVL_RouteID(Node_RouteID* p_RouteID){
         }
 
         else {
-            printf("Cas non pris en charge 1704.\n");
-            exit(1704);
+            printf("Cas non pris en charge.\n");
+            exit(1);
         }
     }
-    else if (p_RouteID->equilibre>-2 && p_RouteID->equilibre<2){        //p_RouteID->equilibre == -1 ou 0 ou 1. Donc équilibré.
-        //do nothing
-        //printf("Pas besoin de rééquilibrage : equilibre = %d.\n", p_RouteID->equilibre);
-    }
+   
     else{
-        printf("Cas non pris en charge 1705 : racine de l'arbre >2 ou <-2 .\n");
-        exit(1705);
+        printf("Cas non pris en charge: racine de l'arbre >2 ou <-2 .\n");
+        exit(2);
     }
     if (p_RouteID == NULL){
-        printf("Erreur 1706 : pointeur NULL.\n");
-        exit(1706);
+        printf("Erreur: pointeur NULL.\n");
+        exit(3);
     }
 
     return p_RouteID;
 }
 
 
-// 2) Equilibrage général
+
+//La fonction ci-dessou permet l'équilibrage de l'AVL qui contient les noeuds avec toute les informations.
 Tree* equilibrerAVL(Tree* p){
     if (p == NULL){
-        printf("Erreur 40 : pointeur NULL.\n");
-        exit(40);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
 
     if (p->equilibre == 2){
         if (p->pR == NULL){
-            printf("Erreur 41 : pointeur NULL.\n");
-            exit(41);
+            printf("Erreur: pointeur NULL.\n");
+            exit(2);
         }
 
         //Double rotation Gauche (RD puis RG)
@@ -583,14 +576,14 @@ Tree* equilibrerAVL(Tree* p){
         }
 
         else {
-            printf("Cas non pris en charge 42.\n");
-            exit(42);
+            printf("Cas non pris en charge.\n");
+            exit(3);
         }
     }
     else if (p->equilibre == -2) {
         if (p->pL == NULL){
-            printf("Erreur 43 : pointeur NULL.\n");
-            exit(43);
+            printf("Erreur: pointeur NULL.\n");
+            exit(1);
         }
 
         //Double rotation Droite (RG puis RD)
@@ -604,21 +597,18 @@ Tree* equilibrerAVL(Tree* p){
         }
 
         else {
-            printf("Cas non pris en charge 44.\n");
-            exit(44);
+            printf("Cas non pris en charge.\n");
+            exit(2);
         }
     }
-    else if (p->equilibre>-2 && p->equilibre<2){        //p->equilibre == -1 ou 0 ou 1. Donc équilibré.
-        //do nothing
-        //printf("Pas besoin de rééquilibrage : equilibre = %d.\n", p->equilibre);
-    }
+    
     else{
-        printf("Cas non pris en charge 45 : racine de l'arbre >2 ou <-2 .\n");
-        exit(45);
+        printf("Cas non pris en charge: racine de l'arbre >2 ou <-2 .\n");
+        exit(3);
     }
     if (p == NULL){
-        printf("Erreur 46 : pointeur NULL.\n");
-        exit(46);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
 
     return p;
@@ -626,23 +616,23 @@ Tree* equilibrerAVL(Tree* p){
 
 
 
-//INSERTION AVL 
-// 1) Insertion AVL spécifique pour Route_ID
+//INSERTION AVL
+
+//Cette fonction permet l'insertion AVL spécifique pour Route_ID
 
 Node_RouteID* insertAVL_RouteID (Tree* p, Node_RouteID* p_RouteID, int v, int* h){  //p_RouteID = p->AVL_RouteID
-    //TEST
+
     if (p == NULL || h == NULL){
-        printf("Erreur 1600 : pointeur NULL.\n");
-        exit(1600);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
 
-    //PROCESS
     if (p_RouteID == NULL){
         p_RouteID = create_Node_RouteID(v);
         *h = 1;
         if (p_RouteID == NULL){
-            printf("Erreur 1602 : pointeur NULL.\n");
-            exit(1602);
+            printf("Erreur: pointeur NULL.\n");
+            exit(3);
         }
         return p_RouteID;
     }
@@ -674,13 +664,11 @@ Node_RouteID* insertAVL_RouteID (Tree* p, Node_RouteID* p_RouteID, int v, int* h
 }
 
 
-// 2) Insertion AVL général
-
-Tree* insertAVL_numerique (Tree* p, Tree* p_copie, int* h){ // AVL trié avec des entiers (par nb d'apparition de ville)
-    //TEST
+///Cette fonction permet l'insertion les noeud dans l'AVL en fonction du nombre d'apparition des villes 
+Tree* insertAVL_numerique (Tree* p, Tree* p_copie, int* h)
     if (h == NULL){
-        printf("Erreur 50 : pointeur NULL.\n");
-        exit(50);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
 
     //PROCESS
@@ -689,7 +677,7 @@ Tree* insertAVL_numerique (Tree* p, Tree* p_copie, int* h){ // AVL trié avec de
         *h = 1;
         if (p == NULL){
             printf("Erreur 51 : pointeur NULL.\n");
-            exit(51);
+            exit(2);
         }
         return p;
     }
@@ -702,7 +690,7 @@ Tree* insertAVL_numerique (Tree* p, Tree* p_copie, int* h){ // AVL trié avec de
     }
     else {
         printf("Erreur 52 : Cas impossible.\n");
-        exit(52);
+        exit(3);
     }
 
     if (*h != 0){
@@ -715,42 +703,38 @@ Tree* insertAVL_numerique (Tree* p, Tree* p_copie, int* h){ // AVL trié avec de
             *h = 1;
         }
     }
-    // return l'adresse 
+   
     return p;
 }
 
-// AVL trié par chaînes de caractères (ordre alphabétique de nom de ville)
+// La fonction ci-dessous permet de trier par ordre alphabétique le nom des villes dans l'AVL. 
 Tree* insertAVL_alphabetique (Tree* p, int Route_ID, char nom_ville[], int ville_Arrivee, int* h){
-    /*  ville_Arrivee == 1 signifie : on insère la ville de départ du trajet (ville départ de l'étape 1)
-        ville_Arrivee == 2 signifie : on insère la ville d'arrivée de toute étape >= 1
-    */
-    //TEST
+   
     if (h == NULL){
-        printf("Erreur 50 : pointeur NULL.\n");
-        exit(50);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
 
-    //PROCESS
     if (p == NULL){
         p = createTree(nom_ville, Route_ID);
-        //Ville départ trajet
+      
         if (ville_Arrivee == 1){
             p->nb_apparition_ville_depart_trajet = p->nb_apparition_ville_depart_trajet + 1 ;
             p->nb_apparition_par_trajet = p->nb_apparition_par_trajet + 1 ;
         }
-        //Ville arrivée étape
+   
         else if (ville_Arrivee == 2){
             p->nb_apparition_ville_arrivee_etape = p->nb_apparition_ville_arrivee_etape + 1 ;
             p->nb_apparition_par_trajet = p->nb_apparition_par_trajet + 1 ;
         }
         else{
-            printf("Erreur 51 : on a ni une ville de départ, ni une ville d'arrivée.\n");
-            exit(51);
+            printf("Erreur: on a ni une ville de départ, ni une ville d'arrivée.\n");
+            exit(2);
         }
         *h = 1;
         if (p == NULL){
-            printf("Erreur 52 : pointeur NULL.\n");
-            exit(52);
+            printf("Erreur: pointeur NULL.\n");
+            exit(3);
         }
         return p;
     }
@@ -762,8 +746,7 @@ Tree* insertAVL_alphabetique (Tree* p, int Route_ID, char nom_ville[], int ville
         *h = -*h;
     }
     else {
-        // Si on a trouvé le même nom de ville : on ne fait rien
-        // strcmp(nom, p->ville) == 0
+   
         if (ville_Arrivee == 1){
             p->nb_apparition_ville_depart_trajet = p->nb_apparition_ville_depart_trajet + 1 ;
             p->nb_apparition_par_trajet = p->nb_apparition_par_trajet + 1 ;
@@ -779,8 +762,8 @@ Tree* insertAVL_alphabetique (Tree* p, int Route_ID, char nom_ville[], int ville
             free(h2);
         }
         else{
-            printf("Erreur 53 : on a ni une ville de départ, ni une ville d'arrivée.\n");
-            exit(53);
+            printf("Erreur: on a ni une ville de départ, ni une ville d'arrivée.\n");
+            exit(1);
         }
         *h = 0;
         return p;
@@ -796,26 +779,20 @@ Tree* insertAVL_alphabetique (Tree* p, int Route_ID, char nom_ville[], int ville
             *h = 1;
         }
     }
-    // return the address (may be new)
     return p;
 }
-
-Tree* selection_insertAVL_alphabetique (Tree* p, char villeA[], char villeB[], int Route_ID, int etape, int* h){  //insertion dans AVL toute les villes d'un trajet 
-    /* La fonction insertAVL_alphabetique s'occupe d'ajouter :
-        -> +1 à nb_apparition_ville_depart_trajet si : on veut insérer villeA et etape==1
-        -> +1 à nb_apparition_ville_arrivee_etape si : on veut insérer villeB et etape>=1
-    */
+//Cette fonction permet l'insertion dans l'AVL de toute les villes d'un trajet 
+Tree* selection_insertAVL_alphabetique (Tree* p, char villeA[], char villeB[], int Route_ID, int etape, int* h){ 
+   
     if (h == NULL){
-        printf("Erreur 1200 : pointeur NULL.\n");
-        exit(1200);
+        printf("Erreur: pointeur NULL.\n");
+        exit(1);
     }
     if (Route_ID <= 0 || etape <= 0){
-        printf("Erreur 1201 : Identifiant de trajet <= 0 ou numéro d'étape de trajet <= 0.\n");
-        exit(1201);
+        printf("Erreur: Identifiant de trajet <= 0 ou numéro d'étape de trajet <= 0.\n");
+        exit(2);
     }
-    /*  ville_Arrivee == 1 signifie : on insère la ville de départ du trajet (ville départ de l'étape 1)
-        ville_Arrivee == 2 signifie : on insère la ville d'arrivée de toute étape >= 1
-    */
+  
     int ville_Arrivee = 0;
     if (etape == 1){
         ville_Arrivee = 1;
@@ -828,9 +805,9 @@ Tree* selection_insertAVL_alphabetique (Tree* p, char villeA[], char villeB[], i
 }
 
 
-//Destruction AVL
+//Suppression AVL
 
-// 1) destroyAVL spécifique pour Route_ID
+//Cette procédure permet de supprimer l'AVL Route_ID
 void destroyAVL_RouteID(Node_RouteID* p_RouteID) {
     if (p_RouteID != NULL) {
         destroyAVL_RouteID(p_RouteID->pL);
@@ -839,7 +816,7 @@ void destroyAVL_RouteID(Node_RouteID* p_RouteID) {
     }
 }
 
-// 2) destroyAVL général
+//Cette procédure permet de supprimer l'AVL général 
 void destroyAVL(Tree* p) {
     if (p != NULL) {
         destroyAVL(p->pL);
@@ -850,9 +827,9 @@ void destroyAVL(Tree* p) {
 }
 
 
-//----------------- AFFICHAGE : préfixe, infixe -----------------
+//AFFICHAGE : préfixe, infixe 
 
-// 1) Affichage spécifique pour Route_ID
+//Cette procédure permet l'affichage de l'AVL Route_ID en prefixe
 void displayPrefixe_RouteID(Node_RouteID* p_RouteID){
     if(p_RouteID !=NULL){
         printf("                        RouteID = [%d],   equilibre = %d\n",p_RouteID->Route_ID, p_RouteID->equilibre);
@@ -860,7 +837,7 @@ void displayPrefixe_RouteID(Node_RouteID* p_RouteID){
         displayPrefixe_RouteID(p_RouteID->pR);
     }
 }
-
+//Cette procédure permet l'affichage de l'AVL Route_ID en infixe
 void displayInfixe_RouteID(Node_RouteID* p_RouteID){
     if(p_RouteID !=NULL){
         displayInfixe_RouteID(p_RouteID->pL);
@@ -870,7 +847,7 @@ void displayInfixe_RouteID(Node_RouteID* p_RouteID){
 }
 
 
-// 2) Affichage général
+//Cette procédure permet l'affichage de l'AVL général en prefixe
 void displayPrefixe(Tree* p){
     if(p !=NULL){
         printf("[%s],   equilibre = %d,\n            nb_apparition_ville_depart_trajet = %d\n            nb_apparition_ville_arrivee_etape = %d\n            nb_apparition_par_trajet = %d\n            doublons_ville_par_trajet = %d\n",p->ville, p->equilibre, p->nb_apparition_ville_depart_trajet, p->nb_apparition_ville_arrivee_etape, p->nb_apparition_par_trajet, p->doublons_ville_par_trajet);
@@ -882,6 +859,7 @@ void displayPrefixe(Tree* p){
     }
 }
 
+//Cette procédure permet l'affichage de l'AVL général en infixe
 void displayInfixe(Tree* p){
     if(p != NULL){
         displayInfixe(p->pL);
@@ -892,7 +870,7 @@ void displayInfixe(Tree* p){
         displayInfixe(p->pR);
     }
 }
-
+//Cette procédure permet l'affichage de l'AVL général en infixe inverse
 void displayInfixeInverse(Tree* p){
     if(p !=NULL){
         displayInfixeInverse(p->pR);
@@ -905,8 +883,8 @@ void displayInfixeInverse(Tree* p){
         displayInfixeInverse(p->pL);
     }
 }
-
-NODE* n_villes_plus_parcourues(Tree* p, int* n, NODE* pNode){ // on veut retourner les n villes les plus traversées. Ici nest un compteur qui décroit. (si on veut les 10 villes les plus traversées, on rentrera *n=10)
+// Cette fonction retourne les n villes les plus traversées.
+NODE* n_villes_plus_parcourues(Tree* p, int* n, NODE* pNode){ 
     if(p != NULL && *n > 0){
         pNode = n_villes_plus_parcourues(p->pR, n, pNode);
         if(*n > 0){
@@ -921,8 +899,7 @@ NODE* n_villes_plus_parcourues(Tree* p, int* n, NODE* pNode){ // on veut retourn
     return pNode;
 }
 
-//---------------------------------- COPIE de AVL ---------------------------------- (ces fonctions ne sont plus exécutées dans le présent code)
-//copie l'AVL en entier et retourne l'adresse de la racine
+
 Node_RouteID * copie_AVL_RouteID (Node_RouteID* p_origine_RouteID){
     if(p_origine_RouteID == NULL){
         return p_origine_RouteID;
@@ -930,13 +907,13 @@ Node_RouteID * copie_AVL_RouteID (Node_RouteID* p_origine_RouteID){
     else{
         Node_RouteID * pNew = create_Node_RouteID(-1);
         if(pNew == NULL){
-            printf("Erreur 2000 : pointeur NULL.\n");
-            exit(2000);
+            printf("Erreur: pointeur NULL.\n");
+            exit(2);
         }
         pNew->Route_ID = p_origine_RouteID->Route_ID;
         if (pNew->Route_ID == -1){
-            printf("Erreur 2001 : Echec copie de Route_ID.\n");
-            exit(2001);
+            printf("Erreur: Echec copie de Route_ID.\n");
+            exit(3);
         }
         pNew->equilibre = p_origine_RouteID->equilibre;
         pNew->pL = copie_AVL_RouteID(p_origine_RouteID->pL);
@@ -951,17 +928,17 @@ Tree * copie_AVL (Tree* p_origine){
         return p_origine;
     }
     else{
-        Tree * pNew = createTree("", 0); //0 est une valeau arbitraire ici, si l'on pouvait, on ne mettrait pas de Route_ID.
-        destroyAVL_RouteID(pNew->AVL_RouteID); // on supprime l'AVL_RouteID créé inutilement
+        Tree * pNew = createTree("", 0); 
+        destroyAVL_RouteID(pNew->AVL_RouteID); 
         if(pNew == NULL){
-            printf("Erreur 1000 : pointeur NULL.\n");
-            exit(1000);
+            printf("Erreur: pointeur NULL.\n");
+            exit(1);
         }
         strcpy(pNew->ville , p_origine->ville);    //copie du nom de ville : strcpy(destination de la copie, source);
         pNew->AVL_RouteID = copie_AVL_RouteID(p_origine->AVL_RouteID);
         if(pNew->AVL_RouteID == NULL){
-            printf("Erreur 1001 : pointeur NULL.\n");
-            exit(1001);
+            printf("Erreur: pointeur NULL.\n");
+            exit(2);
         }
         pNew->nb_apparition_ville_depart_trajet = p_origine->nb_apparition_ville_depart_trajet;
         pNew->nb_apparition_ville_arrivee_etape = p_origine->nb_apparition_ville_arrivee_etape;
@@ -980,22 +957,22 @@ Tree * copie_AVL (Tree* p_origine){
 Tree * transforme_AVLalphab_en_AVLnum(Tree* p_alphabetique, Tree* p_numerique, int* h){
    
     if (h == NULL){
-        printf("Erreur 1000 : pointeur NULL.\n");
-        exit(1000);
+        printf("Erreur: pointeur NULL.\n");
+        exit(3);
     }
-    //PROCESS
+  
     if(p_alphabetique == NULL){
         //do nothing
     }
     else{
         //copie du noeud p_alphabetique sans ses enfants
-        Tree * pNew = createTree("", 0); //0 est une valeau arbitraire ici, si je pouvais, je ne mettrais pas de Route_ID.
+        Tree * pNew = createTree("", 0); 
         destroyAVL_RouteID(pNew->AVL_RouteID); // on supprime l'AVL_RouteID créé inutilement
         if(pNew == NULL){
-            printf("Erreur 1010 : pointeur NULL.\n");
-            exit(1010);
+            printf("Erreur: pointeur NULL.\n");
+            exit(1);
         }
-        strcpy(pNew->ville , p_alphabetique->ville);    //copie du nom de ville : strcpy(destination de la copie, source);
+        strcpy(pNew->ville , p_alphabetique->ville);    //copie du nom de ville 
 
         pNew->nb_apparition_ville_depart_trajet = p_alphabetique->nb_apparition_ville_depart_trajet;
         pNew->nb_apparition_ville_arrivee_etape = p_alphabetique->nb_apparition_ville_arrivee_etape;
@@ -1009,32 +986,20 @@ Tree * transforme_AVLalphab_en_AVLnum(Tree* p_alphabetique, Tree* p_numerique, i
         //insertion du noeud copié dans p_numerique (l'AVL trié par nb d'apparition de ville)
         p_numerique = insertAVL_numerique(p_numerique, pNew, h);
 
-        //Récursivité fonction
+        
         p_numerique = transforme_AVLalphab_en_AVLnum(p_alphabetique->pL, p_numerique, h);
         p_numerique = transforme_AVLalphab_en_AVLnum(p_alphabetique->pR, p_numerique, h);
     }
-    //Cas où p_numerique est NULL au départ
+    
     return p_numerique;
 }
 
 Tree * DIX_Villes_plus_traversees(Tree* AVL_alphabetique){
     if(AVL_alphabetique == NULL){
-        printf("Erreur 1050 : pointeur NULL.\n");
-        exit(1050);
+        printf("Erreur: pointeur NULL.\n");
+        exit(2);
     }
-    /*
-    //copie de AVL_alphabetique
-    printf("\n             Avant copie AVL alphabetique\n");
-    sleep(1);
-    Tree* copie_AVL_alphabetique = NULL;
-    copie_AVL_alphabetique = copie_AVL(AVL_alphabetique);
-    printf("             Après copie AVL alphabetique\n");
-    sleep(1);
-    if(copie_AVL_alphabetique == NULL){
-        printf("Erreur 1051 : pointeur NULL.\n");
-        exit(1051);
-    }
-    */
+  
 
     //Création de AVL_numerique (à partir de copie_AVL_alphabetique)
     Tree* AVL_numerique = NULL;
@@ -1043,18 +1008,15 @@ Tree * DIX_Villes_plus_traversees(Tree* AVL_alphabetique){
     AVL_numerique = transforme_AVLalphab_en_AVLnum(AVL_alphabetique, AVL_numerique , h);
     free(h);
     if(AVL_numerique == NULL){
-        printf("Erreur 1060 : pointeur NULL.\n");
-        exit(1060);
+        printf("Erreur: pointeur NULL.\n");
+        exit(3);
     }
-    /*
-    destroyAVL(copie_AVL_alphabetique);
-    printf("             Mémoire de copie_AVL_alphabetique LIBERE\n\n");
-    */
+    
     return AVL_numerique;
 }
 
 
-//----------------- Main -----------------
+// Main 
 int main() {
     //printf("PROCESS.\n");
 
@@ -1066,44 +1028,27 @@ int main() {
     int Route_ID;
     int etape;
     // Récupération des données de data.csv
-    /*printf("             CREATION AVL_alphabetique\n");*/
     while (scanf("%d;%d;%99[^;];%99[^\n]\n", &Route_ID, &etape, villeA, villeB) == 4){
         AVL_alphabetique = selection_insertAVL_alphabetique(AVL_alphabetique, villeA, villeB, Route_ID, etape, h);
     }
     free(h);
-    /*
-    printf("             FIN CREATION AVL_alphabetique\n");
-    printf("             AFFICHAGE Infixe AVL_alphabetique\n");
-    sleep(0.5);
-    displayInfixe(AVL_alphabetique);
-    printf("             FIN AFFICHAGE Infixe AVL_alphabetique\n");
-    sleep(0.2);
-    */
-
-    Tree* AVL_numerique = DIX_Villes_plus_traversees(AVL_alphabetique);
-    /*
-    printf("             AFFICHAGE Infixe AVL_numerique\n");
-    printf("             Tri par nombre d'apparitions décroissant de villes\n\n");
-    displayInfixeInverse(AVL_numerique);
-    printf("             FIN AFFICHAGE Infixe AVL_numerique\n");
-    */
-
+  
 
     //printf("AVANT n_villes_plus_parcourues\n");
     NODE* pNode = NULL;
     int n = 10;                                                 //on veut les 10 villes les plus parcourues
     pNode = n_villes_plus_parcourues(AVL_numerique, &n, pNode);
     if(pNode == NULL){
-        printf("ERREUR 2500 : pointeur NULL.\n");
-        exit(2500);
+        printf("ERREUR : pointeur NULL.\n");
+        exit(1);
     }
     displayList(pNode);
 
     destroyAVL(AVL_alphabetique);
-    // printf("Mémoire de AVL_alphabetique LIBEREE\n");
+  
     destroyAVL(AVL_numerique);
-    // printf("Mémoire de AVL_numerique LIBEREE\n");
+   
     destroyNode(pNode);
-    //printf("Mémoire de pNode LIBEREE\n");
+  
     return 0;
 }
