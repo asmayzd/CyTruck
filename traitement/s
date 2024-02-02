@@ -15,9 +15,6 @@ s() {
         debut_timer_s=$(date +%s)
 
 	cat "data/data.csv" | tail +2 | cut -d';' -f1,5 | ./progc/s | head -50  > temp/temp_s.csv
-
-    # Exécuter le programme C
-    ./progc/s < temp/temp_s.csv
         
 	cat temp/temp_s.csv
 
