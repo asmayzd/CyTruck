@@ -35,15 +35,20 @@ Une fois sur la page d'accueil, vous pouvez en tapant "6" accéder au fichier ai
 - Parfois, un message d'erreur apparaît lorsqu'on lance les options "t" et "s" alors qu'il n'y a pas d'erreur. 
 
 # Quelques résultats :
-Le temps d'exécution a été de 7 secondes:
+
+Le temps d'exécution pour l'option "d1" a été de 7 secondes:
 ![image(3)](https://github.com/asmayzd/CyTruck/assets/131535443/917d7c55-f250-40ad-9254-b3b3e5f4e9ad)
-Le temps d'exécution a été de 3 secondes:
+
+Le temps d'exécution pour l'option "d2" a étép de 3 secondes:
 ![image(4)](https://github.com/asmayzd/CyTruck/assets/131535443/7fca1b51-d3b3-4f9e-bea8-7e6a89f17552)
-Le temps d'exécution a été de 8 secondes:
+
+Le temps d'exécution pour l'option "l" a été de 8 secondes:
 ![image(5)](https://github.com/asmayzd/CyTruck/assets/131535443/2aa820c4-1df4-48cb-a57c-6a6554701218)
-Le temps d'exécution a été de 15 secondes:
+
+Le temps d'exécution pour l'option "t" a été de 15 secondes:
 ![image(6)](https://github.com/asmayzd/CyTruck/assets/131535443/505fa49c-0b67-481c-8eb0-1361d9c1dee6)
-Le temps d'exécution a été de 13 secondes:
+
+Le temps d'exécution pour l'option "s" a été de 13 secondes:
 ![image(7)](https://github.com/asmayzd/CyTruck/assets/131535443/5c9c92ee-aab0-44b0-bd81-a42f5c3f527d)
 
 
