@@ -56,17 +56,10 @@ fi
         set ylabel 'Noms des conducteurs'
         set xlabel 'Nombre de trajets'
 		
-# Code couleur pour le violet en RGB (en pourcentage)
-#violet = 0x993399  # Violet foncé
 
         plot 'temp/histogram_data.csv' using (0.5*column(2)):0:(0.5*column(2)):(0.5/2.):(column(0)+1):ytic(1) with boxxy lc var
 GNUPLOT_SCRIPT
 
-        #mogrify -rotate "-90" images/graphique_d1.png
-
-
-# Rotation de l'image pour avoir un histogramme horizontal
-  #convert images/graphique_d1.png -rotate 90 images/graphique_d1_rotated.png
 }
 # Appel de la fonction d1
 d1
