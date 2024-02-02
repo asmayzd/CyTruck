@@ -49,6 +49,7 @@ Le temps d'exécution pour l'option "t" a été de 15 secondes:
 ![image(6)](https://github.com/asmayzd/CyTruck/assets/131535443/505fa49c-0b67-481c-8eb0-1361d9c1dee6)
 
 Le temps d'exécution pour l'option "s" a été de 13 secondes:
+
 ![image(7)](https://github.com/asmayzd/CyTruck/assets/131535443/5c9c92ee-aab0-44b0-bd81-a42f5c3f527d)
 
 
