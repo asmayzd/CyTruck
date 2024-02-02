@@ -20,7 +20,7 @@ fin_timer_d1=$(date +%s)
         duree_option_d1=$((fin_timer_d1 - debut_timer_d1))
 
         # Affichez la durée.
-        echo  "\nLe traitement de l'option -d1 a pris $duree_option_d1 secondes.\n"
+        echo  "Le traitement de l'option -d1 a pris $duree_option_d1 secondes."
 	
 	# Créer un fichier de données pour l'histogramme
     awk '{print $2 " " $3 "," $1}' temp/temp_d1.csv | sort -t',' -k2,2n > temp/histogram_data.csv
