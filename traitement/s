@@ -2,9 +2,8 @@
 
 
 chmod 777 traitement/s
-chmod 777 temp/temp_s.csv
 chmod 777 progc/s.c
-chmod 777 temp/histogram_datas.csv
+
 
 s() {
 	
