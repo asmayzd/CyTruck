@@ -9,10 +9,11 @@ l() {
         # Enregistrez le temps de début.
         debut_timer_l=$(date +%s)
 
+# Trouver les 10 trajets les plus longs
 	awk -F";"  '{compteur[$1] += $5} END {for (id_trajet in compteur) print id_trajet ";" compteur[id_trajet]}' data/data.csv |
 sort -t";" -k2nr | head -10 | sort -t";" -k1n > temp/temp_l.csv
 
-
+#Afficher les résultats
  cat temp/temp_l.csv
 
 	fin_timer_l=$(date +%s)
@@ -30,6 +31,7 @@ sort -t";" -k2nr | head -10 | sort -t";" -k1n > temp/temp_l.csv
     # Appel de la fonction pour tracer le graphique
     generate_l
 
+# Ouvre automatiquement l'image du graphique
 	display images/graphique_l.png
 }
 
@@ -42,10 +44,11 @@ generate_l() {
 
     # Partie graphique (gnuplot)
     gnuplot <<-GNUPLOT_SCRIPT
-
-    # Ouverture du script Gnuplot
-	set terminal png # Définit le type de fichier de sortie comme une image PNG
-	set output 'images/graphique_l.png' # Définit le nom et l'emplacement du fichier de sortie
+	#Définition de la taille de l'image :
+	set terminal png 
+	#Sauvegarde du graphique dans le fichier images :
+	set output 'images/graphique_l.png' 
+	#Définition du séparateur
 	set datafile separator ";"
 
 	# Configuration du tracé
@@ -65,5 +68,5 @@ GNUPLOT_SCRIPT
 
 }
 
-
+# Appel de la fonction l
 l
