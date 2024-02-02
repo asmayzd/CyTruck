@@ -6,10 +6,6 @@ chmod 777 progc/t.c
 # Définition de la fonction t
 t() {
 
-
-    # Compiler t.c pour créer un exécutable
-    gcc -o progc/t progc/t.c
-
 # Vérifier si l'exécutable existe et est exécutable
 if [[ ! -x "progc/t" ]]; then
     echo "L'exécutable $progc/t est introuvable ou n'est pas exécutable."
@@ -19,7 +15,7 @@ fi
     # Enregistrez le temps de début.
         debut_timer_t=$(date +%s)
 
-        cat "data/data.csv" | tail +2 | cut -d';' -f1,2,3,4| ./progc/t | head -10 > temp/temp_t.csv
+        cat "data/data.csv" | tail +2 | cut -d';' -f1,2,3,4| progc/t | head -10 > temp/temp_t.csv
 
 	cat "temp/temp_t.csv" | sort -t ';' -k1,1 -f > temp/histogram_datat.csv
 
