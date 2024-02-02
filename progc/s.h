@@ -29,10 +29,10 @@ typedef struct AVL {
 Distance* Newdistance(float dist);
 AVL* createAVL(int routeNbr, float dist);
 AVL* createAVL2(int routeNbr, float maxdist, float mindist, float moyenne, float moyennedist);
-int taille(AVL* p);
-int getEquilibre(AVL* p);
-AVL* rotationDroite(AVL* p);
-AVL* rotationGauche(AVL* p);
+int size(AVL* p);
+int getBalance(AVL* p);
+AVL* rotationRight(AVL* p);
+AVL* rotationLeft(AVL* p);
 AVL* insertAVL(AVL* p, int routenbr, float dist);
 AVL* insertDistance(AVL* p2, int numid, float maxdist, float mindist, float moyenne, float moyennedistance);
 AVL* insertAVL2(AVL* p, AVL* p2);
